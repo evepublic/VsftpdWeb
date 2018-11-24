@@ -32,7 +32,7 @@ else if ($user_item['perm'] == 'wd') $perm = 'Write -DR';
 
 <td><?=$path?></td>
 <td><?=$perm?></td>
-<?
+<?php
 }
  
 ?>
