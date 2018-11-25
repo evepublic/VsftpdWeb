@@ -36,8 +36,8 @@ class Users extends CI_Controller
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 
-		$this->form_validation->set_rules('user', 'Username', 'required');
-		$this->form_validation->set_rules('upass', 'Password', 'required');
+		$this->form_validation->set_rules('user', 'Username', 'required|is_unique[accounts.username]');
+		$this->form_validation->set_rules('upass', 'Password', 'required|matches[repass]|min_length[4]');
 		$this->form_validation->set_rules('repass', 'Password Confirmation', 'required');
 
 		if ($this->form_validation->run() === FALSE) {
@@ -122,7 +122,19 @@ class Users extends CI_Controller
 
 	public function changepass()
 	{
-		$this->users_model->changepass();
-		header("Location: " . base_url() . "index.php/users");
+		$this->form_validation->set_rules('upass', 'Password', 'matches[repass]|min_length[4]');
+
+		if ($this->form_validation->run() == false) {
+			$data['disk1'] = $this->disk_model->get_space('disk1');
+			$data['disk2'] = $this->disk_model->get_space('disk2');
+			$data['disk3'] = $this->disk_model->get_space('disk3');
+
+			$this->load->view('templates/header', $data);
+			$this->load->view('users/error');
+			$this->load->view('templates/footer');
+		} else {
+			$this->users_model->changepass();
+			header("Location: " . base_url() . "index.php/users");
+		}
 	}
 }
