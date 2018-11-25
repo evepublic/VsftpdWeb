@@ -31,7 +31,7 @@ class Users extends CI_Controller
 		$data['users'] = $this->users_model->get_users();
 
 		$data['title'] = 'FTP Users';
-		$data['def_path'] = $this->users_model->get_path(4);
+		$data['def_path'] = $this->users_model->get_path('user_path');
 
 		$this->load->helper('form');
 		$this->load->library('form_validation');
@@ -68,9 +68,9 @@ class Users extends CI_Controller
 		$data['disk2'] = $this->disk_model->get_space('disk2');
 		$data['disk3'] = $this->disk_model->get_space('disk3');
 
-		$data['def_path'] = $this->users_model->get_path(4);
-		$data['getdisk1'] = $this->users_model->get_path(6);
-		$data['getdisk2'] = $this->users_model->get_path(7);
+		$data['def_path'] = $this->users_model->get_path('user_path');
+		$data['getdisk1'] = $this->users_model->get_path('disk1');
+		$data['getdisk2'] = $this->users_model->get_path('disk2');
 
 		$data['checkpath'] = "";
 		$data['checked'] = 0;

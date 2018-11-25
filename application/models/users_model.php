@@ -20,9 +20,9 @@ class Users_model extends CI_Model
 		return $query->row_array();
 	}
 
-	public function get_path($id)
+	public function get_path($name)
 	{
-		$query = $this->db->get_where('settings', array('id' => $id));
+		$query = $this->db->get_where('settings', array('name' => $name));
 
 		$query = $query->row_array(0);
 		$query1 = $query['value'];
