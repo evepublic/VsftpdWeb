@@ -46,7 +46,7 @@ class Users extends CI_Controller
 			$this->load->view('templates/footer');
 		} else {
 			$this->users_model->new_user();
-			header("Location: " . $base_url . "users/");
+			header("Location: " . base_url() . "index.php/users");
 		}
 	}
 
