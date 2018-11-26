@@ -6,6 +6,7 @@ class Monitor extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('disk_model');
+		$this->load->model('monitor_model');
 		$this->check_isvalidated();
 		$this->disk_space();
 	}
@@ -29,11 +30,10 @@ class Monitor extends CI_Controller
 
 		$data['title'] = 'FTP Monitor';
 
-		header("refresh:5;");
+		header("refresh: 5;");
 
-		exec('ps ax | grep vsftpd | grep -v grep', $data['mon1']);
-
-		exec('last | grep vsftpd | grep still', $data['mon2']);
+		$data['mon1'] = $this->monitor_model->getVsftpdProcesses();
+		$data['mon2'] = $this->monitor_model->getVsftpdConnectedUsers(); // does not work, ftp users are shown 'gone - no logout'
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('monitor/index', $data);
