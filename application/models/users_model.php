@@ -20,9 +20,9 @@ class Users_model extends CI_Model
 		return $query->row_array();
 	}
 
-	public function get_path($id)
+	public function get_path($name)
 	{
-		$query = $this->db->get_where('settings', array('id' => $id));
+		$query = $this->db->get_where('settings', array('name' => $name));
 
 		$query = $query->row_array(0);
 		$query1 = $query['value'];
@@ -59,10 +59,14 @@ class Users_model extends CI_Model
 			}
 		}
 
+		$run = 'write_enable=YES';
+		exec("echo $run >> /etc/vsftpd/vusers/$username");
+		exec("sudo chown root /etc/vsftpd/vusers/$username");
+
 		if ($this->input->post('dir') == 'def') {
 			$ppath = 'none';
 		}
-		$q = "INSERT INTO accounts (username, pass, perm, path) VALUES ( '" . $this->input->post('user') . "', MD5('" . $this->input->post('upass') . "'), 'r', '" . $ppath . "' )  ;";
+		$q = "INSERT INTO accounts (username, pass, perm, path) VALUES ( '" . $this->input->post('user') . "', MD5('" . $this->input->post('upass') . "'), 'w', '" . $ppath . "' )  ;";
 		return $this->db->query($q);
 	}
 

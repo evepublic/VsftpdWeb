@@ -29,7 +29,7 @@
 	*/
 ?>
 </li>
-<li> <? echo $disk2['disk']." : ".$disk2['space'] ?>
+<li> <?php echo $disk2['disk']." : ".$disk2['space'] ?>
 <?php 
 	/*	
 	$q="SELECT value,defval FROM settings WHERE name = 'disk1' ;";
@@ -43,7 +43,7 @@
 	*/
 ?>
 </li>
-<li> <? echo $disk3['disk']." : ".$disk3['space'] ?>
+<li> <?php echo $disk3['disk']." : ".$disk3['space'] ?>
 <?php
 	/*
 	$q="SELECT value,defval FROM settings WHERE name = 'disk2' ;";

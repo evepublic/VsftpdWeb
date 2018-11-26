@@ -11,27 +11,27 @@
 			
 			<tr>
 				<td >Select path:</td>
-				<td ><input type="radio" name="dir" value="def"<? if($checked == 1) echo 'checked'; ?> /> Default user path</td>
+				<td ><input type="radio" name="dir" value="def"<?php if($checked == 1) echo 'checked'; ?> /> Default user path</td>
 			</tr>
 			<tr>
 				<td ></td>
-				<td ><input type="radio" name="dir" value="disk1" <? if($checked == 2) echo 'checked'; ?> /> <?=$getdisk1?></td>
+				<td ><input type="radio" name="dir" value="disk1" <?php if($checked == 2) echo 'checked'; ?> /> <?=$getdisk1?></td>
 			</tr>
 			<tr>
 				<td ></td>
-				<td ><input type="radio" name="dir" value="disk2" <? if($checked == 3) echo 'checked'; ?> /> <?=$getdisk2?></td>
+				<td ><input type="radio" name="dir" value="disk2" <?php if($checked == 3) echo 'checked'; ?> /> <?=$getdisk2?></td>
 			</tr>
 			<tr>
 				<td width=150>Home dir:</td>
-				<td width=300><input type="text" name="path" size=30 value="<? if ($user_item['path'] != 'none') echo $checkpath;?>"></td>
+				<td width=300><input type="text" name="path" size=30 value="<?php if ($user_item['path'] != 'none') echo $checkpath;?>"></td>
 			</tr>
 			<tr>
 				<td width=150></td>
-				<td width=300><input type="checkbox" name="write" value="yes" <?if ($user_item['perm'] == 'w' | $user_item['perm'] == 'wd') echo 'checked'; ?> />Write / Upload access</td>
+				<td width=300><input type="checkbox" name="write" value="yes" <?php if ($user_item['perm'] == 'w' | $user_item['perm'] == 'wd') echo 'checked'; ?> />Write / Upload access</td>
 			</tr>
 			<tr>
 				<td width=150></td>
-				<td width=300><input type="checkbox" name="delete" value="yes" <?if ($user_item['perm'] == 'wd') echo 'checked'; ?> />Delete / Rename restriction</td>
+				<td width=300><input type="checkbox" name="delete" value="yes" <?php if ($user_item['perm'] == 'wd') echo 'checked'; ?> />Delete / Rename restriction</td>
 			</tr>
 			<tr>
 				<td colspan=2 align="center"><input type="submit" name="submit" value="Save" onclick=""></td>

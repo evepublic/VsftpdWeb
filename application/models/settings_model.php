@@ -83,7 +83,7 @@ class Settings_model extends CI_Model
 	public function changepass()
 	{
 		$pass = $this->input->post('adminpass');
-		$q = "UPDATE settings SET value = PASSWORD('$pass') WHERE id = 1; ";
+		$q = "UPDATE settings SET value = PASSWORD('$pass') WHERE name = 'admin'; ";
 		$this->db->query($q);
 	}
 }

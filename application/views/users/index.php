@@ -20,8 +20,8 @@ if ($user_item['path'] == 'none') $path = $def_path.$user_item['username'];
 else $path = $user_item['path'];
 
 if ($user_item['perm'] == 'r' || $user_item['perm'] == '0') $perm = 'Read';
-else if ($user_item['perm'] == 'w') $perm = 'Write';
-else if ($user_item['perm'] == 'wd') $perm = 'Write -DR';
+else if ($user_item['perm'] == 'w') $perm = 'Read / Write';
+else if ($user_item['perm'] == 'wd') $perm = 'Read / Write (Delete / Rename restriction)';
 
 ?>
 
@@ -32,7 +32,7 @@ else if ($user_item['perm'] == 'wd') $perm = 'Write -DR';
 
 <td><?=$path?></td>
 <td><?=$perm?></td>
-<?
+<?php
 }
  
 ?>

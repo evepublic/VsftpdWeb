@@ -8,9 +8,9 @@ class Log_model extends CI_Model
 		parent::__construct();
 	}
 
-	public function get_settings($id)
+	public function get_settings($name)
 	{
-		$query = $this->db->get_where('settings', array('id' => $id));
+		$query = $this->db->get_where('settings', array('name' => $name));
 
 		$query = $query->row_array(0);
 		$query1 = $query['value'];

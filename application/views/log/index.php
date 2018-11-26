@@ -9,14 +9,15 @@
 	if (file_exists($myfile) ) { 
 		if (filesize($myfile) > 0 ) {
 
-			exec("tac $myfile /var/www/ftp/temp.txt");
 			$ic = 0;
 			$ic_max = 200;  // stops after this number of rows
 			$handle = popen( "tac $myfile " , "r");
 			while (!feof($handle) && ++$ic<=$ic_max) {
 			//for ($ic = -1; $ic >-101; $ic-- ) {
 			$buffer = fgets($handle, 4096);
-			
+			if ($buffer===false) {
+			continue;
+			}
 			
 			
 			
@@ -26,6 +27,8 @@
 			
 			$size = substr($size,$pos);
 			$size = strstr($size, " ");
+
+			$size = trim($size);
 			
 			$si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
 			$base = 1024;
