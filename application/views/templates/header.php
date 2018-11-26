@@ -3,10 +3,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>FTP Administration</title>
-		<link rel="stylesheet" href="<?php echo base_url();?>css/960.css" type="text/css" media="screen" charset="utf-8" />
+		<link rel="stylesheet" href="<?php echo base_url() . public_path();?>css/960.css" type="text/css" media="screen" charset="utf-8" />
 		
-		<link rel="stylesheet" href="<?php echo base_url();?>css/template.css" type="text/css" media="screen" charset="utf-8" />
-		<link rel="stylesheet" href="<?php echo base_url();?>css/colour.css" type="text/css" media="screen" charset="utf-8" />
+		<link rel="stylesheet" href="<?php echo base_url() . public_path();?>css/template.css" type="text/css" media="screen" charset="utf-8" />
+		<link rel="stylesheet" href="<?php echo base_url() . public_path();?>css/colour.css" type="text/css" media="screen" charset="utf-8" />
 
 </head>
 <body>
