@@ -1,31 +1,31 @@
+----VsftpdWeb
 
---Vsftpweb
+This file is part of VsftpdWeb.
 
-This file is part of VsftpWeb.
+VsftpdWeb is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    VsftpWeb is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+VsftpdWeb is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
-    VsftpWeb is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with VsftpWeb.  If not, see <http://www.gnu.org/licenses/>.
-
+You should have received a copy of the GNU General Public License
+along with VsftpdWeb. If not, see <http://www.gnu.org/licenses/>.
 
 
 ----Codeigniter
 
-Copyright (c) 2008 - 2011, EllisLab, Inc.
+Copyright (c) 2008 - 2014, EllisLab, Inc.
+Copyright (c) 2014 - 2015, British Columbia Institute of Technology
 All rights reserved.
 
-This license is a legal agreement between you and EllisLab Inc. for the use
-of CodeIgniter Software (the "Software").  By obtaining the Software you
-agree to comply with the terms and conditions of this license.
+This license is a legal agreement between you and the British Columbia
+Institute of Technology for the use of CodeIgniter Software (the
+"Software").  By obtaining the Software you agree to comply with the terms
+and conditions of this license.
 
 PERMITTED USE
 You are permitted to use, copy, modify, and distribute the Software and its
@@ -49,7 +49,7 @@ the following conditions are met:
 
 6. Products derived from the Software may not be called "CodeIgniter",
    nor may "CodeIgniter" appear in their name, without prior written
-   permission from EllisLab, Inc.
+   permission from British Columbia Institute of Technology.
 
 INDEMNITY
 You agree to indemnify and hold harmless the authors of the Software and
