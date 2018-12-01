@@ -8,6 +8,8 @@ class Settings extends Abstract_Vstpdweb
 	{
 		parent::__construct();
 		$this->load->model('settings_model');
+		$this->load->helper('form');
+		$this->load->library('form_validation');
 	}
 
 	public function index()
@@ -16,47 +18,64 @@ class Settings extends Abstract_Vstpdweb
 
 		$data['title'] = 'FTP Settings';
 
-		$data['site_url'] = $this->settings_model->get_settings('site_url');
-		$data['def_path'] = $this->settings_model->get_settings('user_path');
-		$data['getdisk1'] = $this->settings_model->get_settings('disk1');
-		$data['getdisk2'] = $this->settings_model->get_settings('disk2');
-		$data['getdisk3'] = $this->settings_model->get_settings('disk3');
-		$data['log_path'] = $this->settings_model->get_settings('log_path');
-		$data['def_path_def'] = $this->settings_model->get_settings_def('user_path');
-		$data['getdisk1_def'] = $this->settings_model->get_settings_def('disk1');
-		$data['getdisk2_def'] = $this->settings_model->get_settings_def('disk2');
-		$data['getdisk3_def'] = $this->settings_model->get_settings_def('disk3');
+		foreach ($this->settings_model->get_all_settings() as $setting) {
+			if (strpos($setting['name'], 'disk') === 0) {
+				$data['get' . $setting['name']] = $setting['value'];
+				$data['get' . $setting['name'] . '_def'] = $setting['defval'];
+			} else {
+				$data[$setting['name']] = $setting['value'];
+			}
+		}
 
-		$data['mail_server'] = $this->settings_model->get_settings('mail_server');
-		$data['mail_port'] = $this->settings_model->get_settings('mail_port');
-		$data['mail_user'] = $this->settings_model->get_settings('mail_user');
-		$data['mail_password'] = $this->settings_model->get_settings('mail_password');
-		$data['mail_from'] = $this->settings_model->get_settings('mail_from');
-
-		$this->load->view('templates/header', $data);
-		$this->load->view('settings/index', $data);
-		$this->load->view('templates/footer');
+		$data['header'] = 'templates/header';
+		$data['content'] = 'settings/index';
+		$this->load->view('templates/main', $data);
 	}
 
 	public function change()
 	{
 		$this->settings_model->change();
-		header("Location: " . base_url() . "index.php/settings");
+		if ($this->input->post('general_settings')) {
+			$this->session->set_flashdata('general_settings_updated', true);
+		}
+
+		if ($this->input->post('mail_settings')) {
+			$this->session->set_flashdata('mail_settings_updated', true);
+		}
+		redirect('settings');
 	}
 
-	public function changepass()
+	public function changepassword()
 	{
-		$this->form_validation->set_rules('adminpass', 'Password', 'matches[repass]|min_length[4]');
+		$this->form_validation->set_rules('currentpassword', 'current password', 'required|min_length[4]');
+		$this->form_validation->set_rules('newpassword', 'new password', 'required|matches[newpasswordconfirm]|min_length[4]');
+		$this->form_validation->set_rules('newpasswordconfirm', 'confirm new password', 'required|matches[newpasswordconfirm]|min_length[4]');
 
-		if ($this->form_validation->run() === false) {
-			$data = $this->getSiteData();
+		$data = [];
+		$error = ($this->form_validation->run() === false) ? true : false;
 
-			$this->load->view('templates/header', $data);
-			$this->load->view('settings/error');
-			$this->load->view('templates/footer');
+		if (!$error) {
+			$username = $this->session->userdata('username');
+			$currentpassword = $this->input->post('currentpassword');
+			$newpassword = $this->input->post('newpassword');
+
+			$this->load->model('login_model');
+
+			$changepasswordresult = $this->login_model->changePassword($username, $currentpassword, $newpassword);
+			if ($changepasswordresult !== true) {
+				$data['password_change_error'] = $changepasswordresult['error'];
+				$error = true;
+			}
+		}
+
+		if ($error) {
+			$data = array_merge($data, $this->getSiteData());
+			$data['header'] = 'templates/header';
+			$data['content'] = 'settings/error';
+			$this->load->view('templates/main', $data);
 		} else {
-			$this->settings_model->changepass();
-			header("Location: " . base_url() . "index.php/settings");
+			$this->session->set_flashdata('password_changed', true);
+			redirect('settings');
 		}
 	}
 }

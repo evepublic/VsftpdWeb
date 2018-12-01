@@ -19,6 +19,10 @@ select, textarea, input, td, #content, #foot {
 	background: #fff url(../img/gradient.png) repeat-x 0 -28px;
 }
 
+input:disabled {
+	background: #D6D6D6;
+}
+
 tr {
 	background-position: 0 -18px;
 }
