@@ -28,7 +28,7 @@ class Log extends CI_Controller
 		$data['disk2'] = $this->disk_model->get_space('disk2');
 		$data['disk3'] = $this->disk_model->get_space('disk3');
 
-		$data['log_path'] = $this->log_model->get_settings('log_path');
+		$data['log_data'] = $this->log_model->getLogData();
 
 		$data['title'] = 'FTP LOG';
 
