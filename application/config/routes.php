@@ -37,23 +37,9 @@
 | in the URL cannot be matched to a valid route.
 |
 */
-$route['settings/changepass'] = 'settings/changepass';
-$route['settings/change'] = 'settings/change';
-$route['settings'] = 'settings';
-$route['users/delete/(:any)'] = 'users/delete/$1';
-$route['users/change'] = 'users/change';
-$route['users/changepass'] = 'users/changepass';
-$route['users/(:any)'] = 'users/edit/$1';
-$route['log'] = 'log';
-$route['email'] = 'email';
-$route['monitor'] = 'monitor';
-$route['users'] = 'users';
-$route['login'] = 'login';
-$route['login/process'] = 'login/process';
-$route['default_controller'] = 'monitor';
-$route['(:any)'] = 'pages/view/$1';
-//$route['default_controller'] = "welcome";
-//$route['404_override'] = '';
+
+$route['default_controller'] = "monitor";
+$route['404_override'] = '';
 
 
 /* End of file routes.php */
