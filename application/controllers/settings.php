@@ -1,34 +1,18 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Settings extends CI_Controller
+require_once 'abstract_vstpdweb.php';
+
+class Settings extends Abstract_Vstpdweb
 {
 	public function __construct()
 	{
 		parent::__construct();
 		$this->load->model('settings_model');
-		$this->load->model('disk_model');
-		$this->check_isvalidated();
-		$this->disk_space();
-	}
-
-	public function disk_space()
-	{
-	}
-
-	private function check_isvalidated()
-	{
-		if (!$this->session->userdata('validated')) {
-			redirect('login');
-		}
 	}
 
 	public function index()
 	{
-		$data['disk1'] = $this->disk_model->get_space('disk1');
-		$data['disk2'] = $this->disk_model->get_space('disk2');
-		$data['disk3'] = $this->disk_model->get_space('disk3');
-
-		//$data['users'] = $this->users_model->get_users();
+		$data = $this->getSiteData();
 
 		$data['title'] = 'FTP Settings';
 
@@ -64,15 +48,13 @@ class Settings extends CI_Controller
 	{
 		$this->form_validation->set_rules('adminpass', 'Password', 'matches[repass]|min_length[4]');
 
-		if ($this->form_validation->run() == false) {
-			$data['disk1'] = $this->disk_model->get_space('disk1');
-			$data['disk2'] = $this->disk_model->get_space('disk2');
-			$data['disk3'] = $this->disk_model->get_space('disk3');
+		if ($this->form_validation->run() === false) {
+			$data = $this->getSiteData();
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('settings/error');
 			$this->load->view('templates/footer');
-		} else if ($this->form_validation->run() == true) {
+		} else {
 			$this->settings_model->changepass();
 			header("Location: " . base_url() . "index.php/settings");
 		}

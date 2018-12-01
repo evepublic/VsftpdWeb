@@ -1,32 +1,18 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Users extends CI_Controller
+require_once 'abstract_vstpdweb.php';
+
+class Users extends Abstract_Vstpdweb
 {
 	public function __construct()
 	{
 		parent::__construct();
 		$this->load->model('users_model');
-		$this->load->model('disk_model');
-		$this->check_isvalidated();
-		$this->disk_space();
-	}
-
-	public function disk_space()
-	{
-	}
-
-	private function check_isvalidated()
-	{
-		if (!$this->session->userdata('validated')) {
-			redirect('login');
-		}
 	}
 
 	public function index()
 	{
-		$data['disk1'] = $this->disk_model->get_space('disk1');
-		$data['disk2'] = $this->disk_model->get_space('disk2');
-		$data['disk3'] = $this->disk_model->get_space('disk3');
+		$data = $this->getSiteData();
 
 		$data['users'] = $this->users_model->get_users();
 
@@ -40,7 +26,7 @@ class Users extends CI_Controller
 		$this->form_validation->set_rules('upass', 'Password', 'required|matches[repass]|min_length[4]');
 		$this->form_validation->set_rules('repass', 'Password Confirmation', 'required');
 
-		if ($this->form_validation->run() === FALSE) {
+		if ($this->form_validation->run() === false) {
 			$this->load->view('templates/header', $data);
 			$this->load->view('users/index', $data);
 			$this->load->view('templates/footer');
@@ -58,15 +44,13 @@ class Users extends CI_Controller
 
 	public function edit($slug)
 	{
+		$data = $this->getSiteData();
+
 		$data['user_item'] = $this->users_model->get_users($slug);
 
 		if (empty($data['user_item'])) {
 			show_404();
 		}
-
-		$data['disk1'] = $this->disk_model->get_space('disk1');
-		$data['disk2'] = $this->disk_model->get_space('disk2');
-		$data['disk3'] = $this->disk_model->get_space('disk3');
 
 		$data['def_path'] = $this->users_model->get_path('user_path');
 		$data['getdisk1'] = $this->users_model->get_path('disk1');
@@ -104,7 +88,7 @@ class Users extends CI_Controller
 		$this->form_validation->set_rules('title', 'Title', 'required');
 		$this->form_validation->set_rules('text', 'text', 'required');
 
-		if ($this->form_validation->run() === FALSE) {
+		if ($this->form_validation->run() === false) {
 			$this->load->view('templates/header', $data);
 			$this->load->view('users/create');
 			$this->load->view('templates/footer');

@@ -1,32 +1,18 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Log extends CI_Controller
+require_once 'abstract_vstpdweb.php';
+
+class Log extends Abstract_Vstpdweb
 {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('disk_model');
 		$this->load->model('log_model');
-		$this->check_isvalidated();
-		$this->disk_space();
-	}
-
-	public function disk_space()
-	{
-	}
-
-	private function check_isvalidated()
-	{
-		if (!$this->session->userdata('validated')) {
-			redirect('login');
-		}
 	}
 
 	public function index()
 	{
-		$data['disk1'] = $this->disk_model->get_space('disk1');
-		$data['disk2'] = $this->disk_model->get_space('disk2');
-		$data['disk3'] = $this->disk_model->get_space('disk3');
+		$data = $this->getSiteData();
 
 		$data['log_data'] = $this->log_model->getLogData();
 

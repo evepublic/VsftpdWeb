@@ -86,4 +86,13 @@ class Settings_model extends CI_Model
 		$q = "UPDATE settings SET value = PASSWORD('$pass') WHERE name = 'admin'; ";
 		$this->db->query($q);
 	}
+
+	public function getSiteName()
+	{
+		$site_name = $this->get_settings('site_name');
+		if (empty($site_name)) {
+			$site_name = exec('hostname -f');
+		}
+		return $site_name;
+	}
 }
