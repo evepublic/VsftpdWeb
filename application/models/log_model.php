@@ -2,6 +2,30 @@
 
 class Log_model extends CI_Model
 {
+	/*
+	* @see https://www.systutorials.com/docs/linux/man/5-xferlog/
+	*/
+	private $xferlog_fields = [
+		'current-time_DDD',
+		'current-time_MMM',
+		'current-time_dd',
+		'current-time_hh:mm:ss',
+		'current-time_YYYY',
+		'transfer-time',
+		'remote-host',
+		'file-size',
+		'filename',
+		'transfer-type',
+		'special-action-flag',
+		'direction',
+		'access-mode',
+		'username',
+		'service-name',
+		'authentication-method',
+		'authenticated-user-id',
+		'completion-status',
+	];
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -22,46 +46,36 @@ class Log_model extends CI_Model
 		$ic = 0;
 		$ic_max = 200; // stops after this number of rows
 		$handle = popen("tac $log_path ", "r");
-		while (!feof($handle) && ++$ic <= $ic_max) {
-			$buffer = fgets($handle, 4096);
-			if ($buffer === false) { // prevent empty record
-				continue;
+		while ((($buffer = fgets($handle, 4096)) !== false) && ++$ic <= $ic_max) {
+			// since xferlog is delimited by spaces, simply tokenize by spaces (spaces in file names are mapped to _)
+			$logitem_tmp = explode(' ', trim($buffer));
+			foreach ($this->xferlog_fields as $index => $field_name) {
+				$logitem[$field_name] = $logitem_tmp[$index];
 			}
 
-			//size
-			$size = strstr($buffer, "/", true);
-			$pos = strrpos($size, ".") + 1;
-
-			$size = substr($size, $pos);
-			$size = strstr($size, " ");
-
+			// size
+			$size = $logitem['file-size'];
 			$si_prefix = array('B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB');
 			$base = 1024;
 			if ($size == 0) {
 				$msize = '0 ' . $si_prefix[0];
 			} else {
 				$class = min((int)log((int)$size, $base), count($si_prefix) - 1);
-				$msize = sprintf('%1.2f', (int)$size / pow($base, $class)) . ' ' . $si_prefix[$class];
+				$msize = sprintf('%1.2f', $size / pow($base, $class)) . ' ' . $si_prefix[$class];
 			}
 
-			//name
-			$name = strstr($buffer, "/");
-			$name = strstr($name, " _ ", true);
-			$name = substr($name, 0, -1);
+			// name
+			$name = $logitem['filename'];
 
-			//state and user
-			$state = strstr($buffer, " _ ");
-			$user = $state;
-			$state = strstr($state, "g", true);
-			$state = substr($state, 3, -1);
-			if ($state == 'i') $state = 'Uploaded';
-			else if ($state == 'o') $state = 'Downloaded';
+			// state
+			if ($logitem['direction'] == 'i') $state = 'Uploaded';
+			elseif ($logitem['direction'] == 'o') $state = 'Downloaded';
+			elseif ($logitem['direction'] == 'd') $state = 'Deleted';
 
-			$user = strstr($user, "g");
-			$user = strstr($user, "ftp", true);
-			$user = substr($user, 2, -1);
+			// user
+			$user = $logitem['username'];
 
-			$info = strstr($buffer, $size, true);
+			$info = implode(' ', array_slice($logitem, 0, 7));
 
 			$result[] = compact(['info', 'msize', 'state', 'user', 'name']);
 		}
