@@ -15,14 +15,13 @@ class Monitor extends Abstract_Vstpdweb
 		$data = $this->getSiteData();
 
 		$data['title'] = 'FTP Monitor';
-
 		header("refresh: 5;");
 
 		$data['mon1'] = $this->monitor_model->getVsftpdProcesses();
 		$data['mon2'] = $this->monitor_model->getVsftpdConnectedUsers(); // does not work, ftp users are shown 'gone - no logout'
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('monitor/index', $data);
-		$this->load->view('templates/footer');
+		$data['header'] = 'templates/header';
+		$data['content'] = 'monitor/index';
+		$this->load->view('templates/main', $data);
 	}
 }

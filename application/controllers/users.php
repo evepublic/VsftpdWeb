@@ -8,6 +8,8 @@ class Users extends Abstract_Vstpdweb
 	{
 		parent::__construct();
 		$this->load->model('users_model');
+		$this->load->helper('form');
+		$this->load->library('form_validation');
 	}
 
 	public function index()
@@ -19,27 +21,27 @@ class Users extends Abstract_Vstpdweb
 		$data['title'] = 'FTP Users';
 		$data['def_path'] = $this->users_model->get_path('user_path');
 
-		$this->load->helper('form');
-		$this->load->library('form_validation');
-
-		$this->form_validation->set_rules('user', 'Username', 'required|is_unique[accounts.username]');
-		$this->form_validation->set_rules('upass', 'Password', 'required|matches[repass]|min_length[4]');
-		$this->form_validation->set_rules('repass', 'Password Confirmation', 'required');
+		$this->form_validation->set_rules('user', 'username', 'required|is_unique[accounts.username]');
+		$this->form_validation->set_rules('upass', 'password', 'required|matches[repass]|min_length[4]');
+		$this->form_validation->set_rules('repass', 'password confirmation', 'required');
 
 		if ($this->form_validation->run() === false) {
-			$this->load->view('templates/header', $data);
-			$this->load->view('users/index', $data);
-			$this->load->view('templates/footer');
+			$data['header'] = 'templates/header';
+			$data['content'] = 'users/index';
+			$this->load->view('templates/main', $data);
 		} else {
 			$this->users_model->new_user();
-			header("Location: " . base_url() . "index.php/users");
+			$this->session->set_flashdata('user_created', $this->input->post('user'));
+			redirect('users');
 		}
 	}
 
 	public function delete($id)
 	{
 		$this->users_model->delete_user($id);
-		$this->load->view('users/delete');
+		$data['header'] = 'templates/header';
+		$data['content'] = 'users/delete';
+		$this->load->view('templates/main', $data);
 	}
 
 	public function edit($slug)
@@ -75,50 +77,48 @@ class Users extends Abstract_Vstpdweb
 
 		$data['title'] = 'Edit User ' . $data['user_item']['username'];
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('users/edit', $data);
-		$this->load->view('templates/footer');
+		$data['header'] = 'templates/header';
+		$data['content'] = 'users/edit';
+		$this->load->view('templates/main', $data);
 	}
 
 	public function create()
 	{
-		$this->load->helper('form');
-		$this->load->library('form_validation');
-
 		$this->form_validation->set_rules('title', 'Title', 'required');
 		$this->form_validation->set_rules('text', 'text', 'required');
 
 		if ($this->form_validation->run() === false) {
-			$this->load->view('templates/header', $data);
-			$this->load->view('users/create');
-			$this->load->view('templates/footer');
+			$data['header'] = 'templates/header';
+			$data['content'] = 'users/create';
+			$this->load->view('templates/main', $data);
 		} else {
 			$this->news_model->set_news();
-			$this->load->view('users/create');
+			$data['header'] = 'templates/header';
+			$data['content'] = 'users/create';
+			$this->load->view('templates/main', $data);
 		}
 	}
 
 	public function change()
 	{
 		$this->users_model->change();
-		header("Location: " . base_url() . "index.php/users");
+		redirect('users');
 	}
 
-	public function changepass()
+	public function changepassword()
 	{
-		$this->form_validation->set_rules('upass', 'Password', 'matches[repass]|min_length[4]');
+		$this->form_validation->set_rules('upass', 'password', 'required|matches[repass]|min_length[4]');
+		$this->form_validation->set_rules('repass', 'password confirmation', 'required');
 
-		if ($this->form_validation->run() == false) {
-			$data['disk1'] = $this->disk_model->get_space('disk1');
-			$data['disk2'] = $this->disk_model->get_space('disk2');
-			$data['disk3'] = $this->disk_model->get_space('disk3');
+		if ($this->form_validation->run() === false) {
+			$data = $this->getSiteData();
 
-			$this->load->view('templates/header', $data);
-			$this->load->view('users/error');
-			$this->load->view('templates/footer');
+			$data['header'] = 'templates/header';
+			$data['content'] = 'users/error';
+			$this->load->view('templates/main', $data);
 		} else {
-			$this->users_model->changepass();
-			header("Location: " . base_url() . "index.php/users");
+			$this->users_model->changePassword();
+			redirect('users');
 		}
 	}
 }

@@ -18,8 +18,8 @@ class Log extends Abstract_Vstpdweb
 
 		$data['title'] = 'FTP LOG';
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('log/index', $data);
-		$this->load->view('templates/footer');
+		$data['header'] = 'templates/header';
+		$data['content'] = 'log/index';
+		$this->load->view('templates/main', $data);
 	}
 }
