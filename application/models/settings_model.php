@@ -2,11 +2,12 @@
 
 class Settings_model extends CI_Model
 {
+	private $table = 'settings';
+
 	public function __construct()
 	{
-		$this->load->helper('url');
-		$this->load->database();
 		parent::__construct();
+		$this->load->database();
 	}
 
 	public function get_settings($name)
@@ -27,64 +28,48 @@ class Settings_model extends CI_Model
 		return $query1;
 	}
 
-	public function change()
+	public function get_all_settings()
 	{
-		$temp = $this->input->post('site_url');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'site_url'; ";
-		$this->db->query($q);
+		$query = $this->db->get($this->table);
 
-		$temp = $this->input->post('user_path');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'user_path' ;";
-		$this->db->query($q);
-
-		$temp = $this->input->post('log_path');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'log_path' ;";
-		$this->db->query($q);
-
-		$temp = $this->input->post('disk1');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'disk1' ;";
-		$this->db->query($q);
-		$temp = $this->input->post('disk1n');
-		$q = "UPDATE settings SET defval = '$temp' WHERE name = 'disk1' ;";
-		$this->db->query($q);
-
-		$temp = $this->input->post('disk2');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'disk2' ;";
-		$this->db->query($q);
-		$temp = $this->input->post('disk2n');
-		$q = "UPDATE settings SET defval = '$temp' WHERE name = 'disk2' ;";
-		$this->db->query($q);
-
-		$temp = $this->input->post('disk3');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'disk3' ;";
-		$this->db->query($q);
-		$temp = $this->input->post('disk3n');
-		$q = "UPDATE settings SET defval = '$temp' WHERE name = 'disk3' ;";
-		$this->db->query($q);
-
-		//mail
-		$temp = $this->input->post('mail_server');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'mail_server'; ";
-		$this->db->query($q);
-		$temp = $this->input->post('mail_port');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'mail_port'; ";
-		$this->db->query($q);
-		$temp = $this->input->post('mail_user');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'mail_user'; ";
-		$this->db->query($q);
-		$temp = $this->input->post('mail_password');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'mail_password'; ";
-		$this->db->query($q);
-		$temp = $this->input->post('mail_from');
-		$q = "UPDATE settings SET value = '$temp' WHERE name = 'mail_from'; ";
-		$this->db->query($q);
+		$result = $query->result_array();
+		return $result;
 	}
 
-	public function changepass()
+	public function change()
 	{
-		$pass = $this->input->post('adminpass');
-		$q = "UPDATE settings SET value = PASSWORD('$pass') WHERE name = 'admin'; ";
-		$this->db->query($q);
+		$settings_variables = [
+			'def_disk1',
+			'def_disk2',
+			'def_disk3',
+			'disk1',
+			'disk2',
+			'disk3',
+			'log_path',
+			'mail_from',
+			'mail_password',
+			'mail_port',
+			'mail_server',
+			'mail_user',
+			'site_name',
+			'user_path',
+		];
+
+		$updated_settings = [];
+		foreach ($settings_variables as $key) {
+			if (array_key_exists($key, $this->input->post())) {
+				if ((substr($key, 0, 8) === 'def_disk')) {
+					$updated_settings[substr($key, 4)]['defval'] = $this->input->post($key);
+				} else {
+					$updated_settings[$key]['value'] = $this->input->post($key);
+				}
+			}
+		}
+
+		foreach ($updated_settings as $name => $data) {
+			$this->db->where('name', $name);
+			$this->db->update($this->table, $data);
+		}
 	}
 
 	public function getSiteName()

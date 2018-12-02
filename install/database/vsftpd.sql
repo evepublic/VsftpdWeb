@@ -80,7 +80,7 @@ CREATE TABLE `settings` (
   `defval` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,8 +89,34 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES (1,'admin','*4ACFE3202A5FF5CF467898FC58AAB1D615029441',''),(2,'site_url','',''),(3,'user_path','/mnt/ftpusers/',''),(4,'disk1','/mnt/ftpusers/','disk 1'),(5,'disk2','/mnt/ftpusers/','disk 2'),(6,'disk3','/','root'),(7,'log_path','/var/log/xferlog',''),(8,'mail_server','mail.mail.com',''),(9,'mail_port','25',''),(10,'mail_user','username@mail.com',''),(11,'mail_password','mailpassword',''),(12,'mail_from','FTP Report','');
+INSERT INTO `settings` VALUES (1,'site_name','Demo',''),(2,'user_path','/mnt/ftpusers/',''),(3,'disk1','/mnt/ftpusers/','disk 1'),(4,'disk2','/mnt/ftpusers/','disk 2'),(5,'disk3','/','root'),(6,'log_path','/var/log/xferlog',''),(7,'mail_server','mail.mail.com',''),(8,'mail_port','25',''),(9,'mail_user','username@mail.com',''),(10,'mail_password','mailpassword',''),(11,'mail_from','FTP Report','');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'admin','$2y$10$T6qqCVyu9/eV5EpxwkjKpe9DydXdiydMQTM5awThSAQ6Rcve4m0R2');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
