@@ -4,9 +4,9 @@ class Users_model extends CI_Model
 {
 	public function __construct()
 	{
-		$this->load->helper('url');
-		$this->load->database();
 		parent::__construct();
+		$this->load->database();
+		$this->load->model('security_model');
 	}
 
 	public function get_users($id = FALSE)
@@ -66,8 +66,14 @@ class Users_model extends CI_Model
 		if ($this->input->post('dir') == 'def') {
 			$ppath = 'none';
 		}
-		$q = "INSERT INTO accounts (username, pass, perm, path) VALUES ( '" . $this->input->post('user') . "', MD5('" . $this->input->post('upass') . "'), 'w', '" . $ppath . "' )  ;";
-		return $this->db->query($q);
+
+		$account_data = array(
+			'username' => $this->input->post('user'),
+			'pass' => $this->security_model->getPasswordHash($this->input->post('upass')),
+			'perm' => 'w',
+			'path' => $ppath,
+		);
+		$this->db->insert('accounts', $account_data);
 	}
 
 	public function delete_user($id)
@@ -109,7 +115,6 @@ class Users_model extends CI_Model
 		$this->db->query($q);
 
 		// make user file
-		//if (!file_exists("/etc/vsftpd/vusers/$username"))
 		exec("sudo rm /etc/vsftpd/vusers/$username");
 
 		$run = '';
@@ -139,7 +144,7 @@ class Users_model extends CI_Model
 			$q = "SELECT value FROM settings WHERE name = 'disk1' ;";
 			$ppath = $this->db->query($q)->row();
 			$ppath = $ppath->value . $username;
-			//echo $ppath;
+
 			if (!file_exists($ppath)) {
 				if (!mkdir($ppath, 0777)) die("Failed to mkdir $ppath, did the dir existed? ");
 				if (!chmod($ppath, 0777)) die('Failed to chmod');
@@ -147,11 +152,9 @@ class Users_model extends CI_Model
 		}
 	}
 
-	public function changepass()
+	public function changePassword()
 	{
-		$id = $this->input->post('id');
-		$pass = $this->input->post('upass');
-		$q = "UPDATE accounts SET pass = MD5('$pass') WHERE id = '$id';";
-		$this->db->query($q);
+		$this->db->where('id', (int)$this->input->post('id'));
+		$this->db->update('accounts', ['pass' => $this->security_model->getPasswordHash($this->input->post('upass'))]);
 	}
 }
