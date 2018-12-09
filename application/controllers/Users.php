@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once 'abstract_vstpdweb.php';
+require_once 'Abstract_vstpdweb.php';
 
 class Users extends Abstract_Vstpdweb
 {
