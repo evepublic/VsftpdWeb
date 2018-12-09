@@ -2,6 +2,8 @@
 
 class Users_model extends CI_Model
 {
+	private $table = 'accounts';
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -12,11 +14,11 @@ class Users_model extends CI_Model
 	public function get_users($id = FALSE)
 	{
 		if ($id === FALSE) {
-			$query = $this->db->get('accounts');
+			$query = $this->db->get($this->table);
 			return $query->result_array();
 		}
 
-		$query = $this->db->get_where('accounts', array('id' => $id));
+		$query = $this->db->get_where($this->table, array('id' => $id));
 		return $query->row_array();
 	}
 
@@ -73,16 +75,18 @@ class Users_model extends CI_Model
 			'perm' => 'w',
 			'path' => $ppath,
 		);
-		$this->db->insert('accounts', $account_data);
+		$this->db->insert($this->table, $account_data);
 	}
 
 	public function delete_user($id)
 	{
-		$q = "SELECT username FROM accounts WHERE id = $id ;";
-		$username = $this->db->query($q)->row();
-		$username = $username->username;
+		$this->db->select('username');
+		$query = $this->db->get_where($this->table, ['id' => (int)$id])->row_array();
+		if (!count($query) === 0) return false;
+
+		$username = $query['username'];
 		exec("sudo rm /etc/vsftpd/vusers/$username");
-		return $this->db->delete('accounts', array('id' => $id));
+		return $this->db->delete($this->table, array('id' => (int)$id));
 	}
 
 	public function change()
@@ -96,8 +100,8 @@ class Users_model extends CI_Model
 		else if ($wr == 'yes' && $del != 'yes') $write = 'w';
 		else $write = 'r';
 
-		$q = "UPDATE accounts SET perm = '$write' WHERE id = $id;";
-		$this->db->query($q);
+		$this->db->where('id', (int)$id);
+		$this->db->update($this->table, ['perm' => $write]);
 
 		$ppath = $this->input->post('path');
 		$dir = $this->input->post('dir');
@@ -106,13 +110,15 @@ class Users_model extends CI_Model
 		if ($dir == 'disk2') $ppath = $this->input->post('disk2') . $ppath;
 
 		if ($ppath == null) {
-			$q = "UPDATE accounts SET path = 'none' WHERE id = $id;";
+			$this->db->where('id', (int)$id);
+			$this->db->update($this->table, ['path' => 'none']);
 			$mkd = 0;
 		} else {
-			$q = "UPDATE accounts SET path = '$ppath' WHERE id = $id;";
+			$this->db->where('id', (int)$id);
+			$this->db->update($this->table, ['path' => $ppath]);
+
 			$mkd = 1;
 		}
-		$this->db->query($q);
 
 		// make user file
 		exec("sudo rm /etc/vsftpd/vusers/$username");
@@ -141,8 +147,8 @@ class Users_model extends CI_Model
 				if (!chmod($ppath, 0777)) die('Failed to chmod');
 			}
 		} else if ($mkd == 0) {
-			$q = "SELECT value FROM settings WHERE name = 'disk1' ;";
-			$ppath = $this->db->query($q)->row();
+			$this->db->select('value');
+			$ppath = $this->db->get_where('settings', ['name' => 'disk1'])->row();
 			$ppath = $ppath->value . $username;
 
 			if (!file_exists($ppath)) {
@@ -155,6 +161,6 @@ class Users_model extends CI_Model
 	public function changePassword()
 	{
 		$this->db->where('id', (int)$this->input->post('id'));
-		$this->db->update('accounts', ['pass' => $this->security_model->getPasswordHash($this->input->post('upass'))]);
+		$this->db->update($this->table, ['pass' => $this->security_model->getPasswordHash($this->input->post('upass'))]);
 	}
 }

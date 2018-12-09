@@ -12,7 +12,7 @@ class Settings_model extends CI_Model
 
 	public function get_settings($name)
 	{
-		$query = $this->db->get_where('settings', array('name' => $name));
+		$query = $this->db->get_where($this->table, array('name' => $name));
 
 		$query = $query->row_array(0);
 		$query1 = $query['value'];
@@ -21,7 +21,7 @@ class Settings_model extends CI_Model
 
 	public function get_settings_def($name)
 	{
-		$query = $this->db->get_where('settings', array('name' => $name));
+		$query = $this->db->get_where($this->table, array('name' => $name));
 
 		$query = $query->row_array(0);
 		$query1 = $query['defval'];
