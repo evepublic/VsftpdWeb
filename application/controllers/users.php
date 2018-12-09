@@ -82,23 +82,6 @@ class Users extends Abstract_Vstpdweb
 		$this->load->view('templates/main', $data);
 	}
 
-	public function create()
-	{
-		$this->form_validation->set_rules('title', 'Title', 'required');
-		$this->form_validation->set_rules('text', 'text', 'required');
-
-		if ($this->form_validation->run() === false) {
-			$data['header'] = 'templates/header';
-			$data['content'] = 'users/create';
-			$this->load->view('templates/main', $data);
-		} else {
-			$this->news_model->set_news();
-			$data['header'] = 'templates/header';
-			$data['content'] = 'users/create';
-			$this->load->view('templates/main', $data);
-		}
-	}
-
 	public function change()
 	{
 		$this->users_model->change();
