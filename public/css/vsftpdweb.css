@@ -1,0 +1,81 @@
+/* colors */
+
+body {
+	background: #F7F4E9;
+}
+
+.navbar  {
+	margin-top:10px;
+
+}
+
+.navbar {
+	background: #092765;
+}
+
+#navbarbottom {
+	background: #093abe;
+}
+
+
+.navbar li {
+	color: white;
+
+}
+
+.footer {
+	margin-top:10px;
+	margin-bottom:10px;
+	background: white;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+	color: white;
+}
+
+.navbar-inverse .navbar-brand:focus, .navbar-inverse .navbar-brand {
+	color: white;
+}
+
+input[type=submit], input[type=button] {
+	background: #FF7226;
+}
+
+input[type=submit]:hover, input[type=button] {
+	background: #ea7c2a;
+}
+
+
+.container {
+
+}
+
+.navbar {
+	border-radius: 0 !important;
+}
+
+.content-area {
+	background: white;
+	min-height: 400px;
+}
+
+
+.table > thead > tr > td {
+border-top: 0px;
+}
+
+#diskspace > thead > tr > th,
+#diskspace > tbody > tr > th,
+#diskspace > tfoot > tr > th,
+#diskspace > thead > tr > td,
+#diskspace > tbody > tr > td,
+#diskspace > tfoot > tr > td {
+	border-top: 0px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding: 0px;
+}
+
+#diskspace {
+	margin-bottom: 0px;
+}

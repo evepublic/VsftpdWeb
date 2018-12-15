@@ -1,89 +1,74 @@
-<div class="grid_16">
-	<h1>Service monitor</h1>
+<h1><?= $title ?></h1>
 
-	<table class="monitor">
-		<?php if (isset($mon1['name']) and $mon1['name'] === 'listener') { ?>
+<h2>Service</h2>
+
+<?php if (isset($mon1['name']) and $mon1['name'] === 'listener') { ?>
+	<div class="panel panel-success">
+		<div class="panel-heading">VSFTPD server is online</div>
+	</div>
+<?php } else { ?>
+	<div class="panel panel-danger">
+		<div class="panel-heading">VSFTPD server is offline</div>
+	</div>
+<?php } ?>
+
+<h2>Active users</h2>
+
+<table class="table">
+	<tr>
+		<th>Username</th>
+		<th>Action</th>
+		<th>Start Time</th>
+		<th>IP Address</th>
+		<th>pid</th>
+		<th>FTP Command</th>
+	</tr>
+
+	<?php
+	if (isset($mon1['children'])) foreach ($mon1['children'] as $child) {
+		if (isset($child['children'])) foreach ($child['children'] as $child2) {
+			?>
 			<tr>
-				<th class="success" colspan="5">VSFTPD server is online</th>
+
+				<td>
+					<?= htmlentities($child2['user']) ?>
+				</td>
+
+				<td>
+					<?php switch ($child2['command']) {
+						case 'IDLE':
+							echo 'Idle';
+							break;
+						case 'STOR':
+							echo 'Uploading file: ' . htmlentities($child2['parameter']);
+							break;
+						case 'RETR':
+							echo 'Downloading file: ' . htmlentities($child2['parameter']);
+							break;
+					} ?>
+				</td>
+
+				<td>
+					<?= $child2['starttime'] ?>
+				</td>
+
+				<td>
+					<?= $child2['ip'] ?>
+				</td>
+
+				<td>
+					<?= $child2['ppid'] ?>
+				</td>
+
+				<td>
+					<?= $child2['command'] . ' ' . htmlentities($child2['parameter']); ?>
+				</td>
+
 			</tr>
-		<?php } else { ?>
-			<tr>
-				<th class="error" colspan="5">VSFTPD server is offline</th>
-			</tr>
-		<?php } ?>
-	</table>
 
-	<table class="monitor">
-		<tr>
-			<th>Username</th>
-			<th>Action</th>
-			<th>Start Time</th>
-			<th>IP Address</th>
-			<th>pid</th>
-			<th>FTP Command</th>
-		</tr>
-
-		<?php
-		if (isset($mon1['children'])) foreach ($mon1['children'] as $child) {
-			if (isset($child['children'])) foreach ($child['children'] as $child2) {
-				?>
-				<tr>
-
-					<td>
-						<?= $child2['user'] ?>
-					</td>
-
-					<td>
-						<?php switch ($child2['command']) {
-							case 'IDLE':
-								echo 'Idle';
-								break;
-							case 'STOR':
-								echo 'Uploading file: ' . $child2['parameter'];
-								break;
-							case 'RETR':
-								echo 'Downloading file: ' . $child2['parameter'];
-								break;
-						} ?>
-					</td>
-
-					<td>
-						<?= $child2['starttime'] ?>
-					</td>
-
-					<td>
-						<?= $child2['ip'] ?>
-					</td>
-
-					<td>
-						<?= $child2['ppid'] ?>
-					</td>
-
-					<td>
-						<?= $child2['command'] . ' ' . $child2['parameter'] ?>
-					</td>
-
-				</tr>
-
-				<?php
-			}
+			<?php
 		}
-		?>
+	}
+	?>
 
-	</table>
-</div>
-
-<br/>
-<br/>
-
-<div class="grid_16">
-	<h1>Users Connected</h1>
-
-	<table class="monitor">
-		<?php foreach ($mon2 as $line) {
-			$line = substr($line, 0, -16);
-			$user = strstr($line, "vsftpd", true);
-			echo "<tr><td id = inf>    <strong>$user</strong> is logged in </td><td>U: $line </td></tr>";
-		} ?>
-	</table>
-</div>
+</table>

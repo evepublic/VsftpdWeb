@@ -1,16 +1,18 @@
-<h1>FTP LOG</h1>
+<h1><?= $title ?></h1>
 
 <?php if (isset($log_data['error'])) { ?>
-	<div class="error">
+	<div class="alert alert-danger">
 		<?= $log_data['error'] ?>
 	</div>
-	<br>
 <?php } ?>
 
-<table class="log">
+<table class="table">
 
 	<tr>
-		<th>Info</th>
+		<th>Date</th>
+		<th>Time</th>
+		<th>Remote host</th>
+		<th>Transfer time</th>
 		<th>Size</th>
 		<th>State</th>
 		<th>User</th>
@@ -19,11 +21,14 @@
 
 	<?php if (!isset($log_data['error'])) foreach ($log_data as $record) { ?>
 		<tr>
-			<td><?= $record['info'] ?></td>
-			<td><?= $record['msize'] ?></td>
-			<td><?= $record['state'] ?></td>
-			<td><?= $record['user'] ?></td>
-			<td><?= $record['name'] ?></td>
+			<td><?= htmlentities($record['date']); ?></td>
+			<td><?= htmlentities($record['time']); ?></td>
+			<td><?= htmlentities($record['remotehost']); ?></td>
+			<td><?= htmlentities($record['transfertime']); ?></td>
+			<td><?= htmlentities($record['msize']); ?></td>
+			<td><?= htmlentities($record['state']); ?></td>
+			<td><?= htmlentities($record['user']); ?></td>
+			<td><?= htmlentities($record['name']); ?></td>
 		</tr>
 	<?php } ?>
 

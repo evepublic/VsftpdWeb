@@ -28,16 +28,14 @@ class Login_model extends CI_Model
 	public function changePassword($username, $currentpassword, $newpassword)
 	{
 		// validate current password
-		$this->load->model('login_model');
-		$validation_result = $this->login_model->validate($username, $currentpassword);
+		$validation_result = $this->validate($username, $currentpassword);
 		if ($validation_result !== true) {
-			return ['error' => 'Your current password is incorrect'];
+			return ['error' => 'Your current password is incorrect.'];
 		}
 
 		// update password
 		$this->db->where('username', $username);
 		$this->db->update($this->table, ['password' => password_hash($newpassword, PASSWORD_DEFAULT)]);
-
 		return true;
 	}
 }

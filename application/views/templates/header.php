@@ -1,19 +1,43 @@
-<h1 id="head">
-	<span class="headspan">VsftpdWeb FTP Administration : <?= $site_name ?></span>
+<nav class="navbar navbar-inverse">
 
-	<span class='free'>
-		<ul class="disk">
-			<li>Main disk : <?= $disk1['space'] ?></li>
-			<li><?= $disk2['disk'] . ' : ' . $disk2['space'] ?></li>
-			<li><?= $disk3['disk'] . ' : ' . $disk3['space'] ?></li>
+	<div class="container-fluid" id="navbartop">
+
+		<div class="navbar-header">
+			<span class="navbar-brand">VsftpdWeb FTP Administration: <?= htmlentities($site_name_display); ?></span>
+		</div>
+
+		<ul class="nav navbar-nav navbar-right">
+			<li>
+				<table class="table" id="diskspace">
+					<tr>
+						<td><?= $disk1['disk'] ?></td>
+						<td>/</td>
+						<td><?= $disk2['space'] ?> free</td>
+					</tr>
+					<tr>
+						<td><?= $disk1['disk'] ?></td>
+						<td>/</td>
+						<td><?= $disk2['space'] ?> free</td>
+					</tr>
+				</table>
+			</li>
 		</ul>
-	</span>
-</h1>
 
-<ul id="navigation">
-	<li><a href="<?= site_url('monitor'); ?>">FTP Monitor</a></li>
-	<li><a href="<?= site_url('log'); ?>">FTP Log</a></li>
-	<li><a href="<?= site_url('users'); ?>">FTP User Settings</a></li>
-	<li><a href="<?= site_url('settings'); ?>">General Settings</a></li>
-	<li><a href="<?= site_url('logout'); ?>">Log Out</a></li>
-</ul>
+	</div>
+
+	<div class="container-fluid" id="navbarbottom">
+
+		<ul class="nav navbar-nav">
+			<li><a href="<?= site_url('monitor'); ?>">Service Monitor</a></li>
+			<li><a href="<?= site_url('log'); ?>">FTP Log</a></li>
+			<li><a href="<?= site_url('users'); ?>">FTP User Management</a></li>
+			<li><a href="<?= site_url('settings'); ?>">Settings</a></li>
+		</ul>
+
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="<?= site_url('logout'); ?>">Log Out</a></li>
+		</ul>
+
+	</div>
+
+</nav>

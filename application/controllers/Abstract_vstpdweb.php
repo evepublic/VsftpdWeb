@@ -2,6 +2,8 @@
 
 abstract class Abstract_Vstpdweb extends CI_Controller
 {
+	protected $title;
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -25,7 +27,15 @@ abstract class Abstract_Vstpdweb extends CI_Controller
 	{
 		$data = $this->getDiskSpaceData();
 		$this->load->model('settings_model');
-		$data['site_name'] = $this->settings_model->getSiteName();
+		$data['site_name_display'] = $this->settings_model->getSiteName();
+		$data['title'] = $this->title;
+		$data['header'] = 'templates/header';
 		return $data;
+	}
+
+	public function validate_permissions($permissions)
+	{
+		$this->form_validation->set_message(__FUNCTION__, 'The {field} field has an invalid value: ' . htmlentities($permissions));
+		return in_array($permissions, ['r', 'wd', 'w']);
 	}
 }

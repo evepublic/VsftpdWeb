@@ -1,30 +1,113 @@
-<h1>Users</h1>
-<table class="users" align="center">
+<h1><?= $title ?></h1>
+
+<h2 id="users_create_user">Create a new FTP user</h2>
+
+<?= form_submit_flash_message('users_create_user'); ?>
+
+<?= form_open('users/create', ['class' => 'form-horizontal']); ?>
+
+<div class="form-group">
+	<label class="control-label col-sm-3" for="username">Username:</label>
+	<div class="col-sm-3">
+		<input type="text" class="form-control" id="username" placeholder="Enter username" name="username" required>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="control-label col-sm-3" for="password">Password:</label>
+	<div class="col-sm-3">
+		<input type="password" class="form-control" id="password" placeholder="Enter password" name="password" required>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="control-label col-sm-3" for="confirmpassword">Confirm password:</label>
+	<div class="col-sm-3">
+		<input type="password" class="form-control" id="confirmpassword" placeholder="Confirm password" name="confirmpassword" required>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="control-label col-sm-3" for="permissions_r">Permissions:</label>
+	<div class="col-sm-4">
+		<div>
+			<input type="radio" id="permissions_r" name="permissions" <?= ($default_permissions === 'r') ? 'checked' : ''; ?> value="r"> Read only
+		</div>
+		<div>
+			<input type="radio" name="permissions" <?= ($default_permissions === 'wd') ? 'checked' : ''; ?> value="wd"> Read / Write (Delete / Rename restriction)
+		</div>
+		<div>
+			<input type="radio" name="permissions" <?= ($default_permissions === 'w') ? 'checked' : ''; ?> value="w"> Read / Write
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+	<div class="col-sm-offset-3 col-sm-2">
+		<input class="btn btn-default" type="submit" value="Create user">
+	</div>
+</div>
+
+<?= form_close(); ?>
+
+
+<h2 id="users_batchimport">Batch import FTP users</h2>
+
+<?= form_submit_flash_message('users_batchimport'); ?>
+
+<p>Create multiple users at once from a CSV file.</p>
+<p>The CSV file can only contain new users and must have 2 columns.</p>
+<ul>
+	<li>username</li>
+	<li>password</li>
+</ul>
+
+<?= form_open_multipart('users/importcsv', ['class' => 'form-horizontal']); ?>
+
+<div class="form-group">
+	<label class="control-label col-sm-3" for="username">Select an CSV file:</label>
+	<div class="col-sm-3">
+		<input type="file" class="form-control" name="import_file" required>
+	</div>
+</div>
+
+<div class="form-group">
+	<div class="col-sm-offset-3 col-sm-2">
+		<input class="btn btn-default" type="submit" value="Import CSV file">
+	</div>
+</div>
+
+<?= form_close(); ?>
+
+
+<span id="users_delete_user"></span>
+<h2>All FTP users</h2>
+
+<?= form_submit_flash_message('users_delete_user'); ?>
+
+<table class="table">
 
 	<tr>
 		<th>Username</th>
-		<th></th>
 		<th></th>
 		<th>Path</th>
 		<th>Permissions</th>
 	</tr>
 
-	<?php foreach ($users as $user_item) {
-		$del = site_url('users/delete/' . $user_item['id']);
-		$pw = site_url('users/edit/' . $user_item['id']);
+	<?php foreach ($users as $user) {
 
-		if ($user_item['path'] == 'none') $path = $def_path . $user_item['username'];
-		else $path = $user_item['path'];
+		if ($user['path'] == 'none') $path = $storage_dir . $user['username'];
+		else $path = $user['path'];
 
-		if ($user_item['perm'] == 'r' || $user_item['perm'] == '0') $perm = 'Read';
-		else if ($user_item['perm'] == 'w') $perm = 'Read / Write';
-		else if ($user_item['perm'] == 'wd') $perm = 'Read / Write (Delete / Rename restriction)';
+		$perm = '';
+		if ($user['perm'] === 'r') $perm = 'Read only';
+		elseif ($user['perm'] === 'w') $perm = 'Read / Write';
+		elseif ($user['perm'] === 'wd') $perm = 'Read / Write (Delete / Rename restriction)';
 		?>
 
 		<tr>
-			<td><strong><?= $user_item['username'] ?></strong></td>
-			<td><a href="<?= $del ?>" class="delete">Delete</a></td>
-			<td><a href="<?= $pw ?>" class="edit">Settings</a></td>
+			<td><strong><?= $user['username'] ?></strong></td>
+			<td><a href="<?= site_url('users/edit/' . (int)$user['id']); ?>" class="edit">Edit</a></td>
 			<td><?= $path ?></td>
 			<td><?= $perm ?></td>
 		</tr>
@@ -32,67 +115,3 @@
 	<?php } ?>
 
 </table>
-
-
-<h1 id="newuser">New FTP User</h1>
-
-<?php if (validation_errors()) { ?>
-	<div class="error">
-		<?= validation_errors(); ?>
-	</div>
-	<br>
-<?php } ?>
-
-<?php if ($this->session->flashdata('user_created')) { ?>
-	<div class="success">
-		User '<?= $this->session->flashdata('user_created') ?>' was created successfully
-	</div>
-	<br>
-<?php } ?>
-
-<?= form_open('users#newuser'); ?>
-
-<table align="center">
-
-	<colgroup>
-		<col width="20%">
-		<col width="20%">
-		<col width="60%">
-	</colgroup>
-
-	<tr>
-		<th colspan="3">New Username</th>
-	</tr>
-
-	<tr>
-		<td>Username:</td>
-		<td><input type="text" name="user" size="30"></td>
-	</tr>
-	<tr>
-		<td>Password:</td>
-		<td><input type="password" name="upass" size="30"></td>
-	</tr>
-	<tr>
-		<td>Confirm Password:</td>
-		<td><input type="password" name="repass" size="30"></td>
-	</tr>
-
-	<tr>
-		<td>Select path:</td>
-		<td><input type="radio" name="dir" value="def" checked/> Default user path</td>
-		<td><input type="radio" name="dir" value="custom"/> Custom path</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><input type="text" size="30" value="<?= $def_path ?>" disabled="disabled"></td>
-		<td><input type="text" name="path" size="30" value=""></td>
-	</tr>
-
-	<tr>
-		<td colspan="3" align="center"><input type="submit" name="create_user_submit" value="Create User"/></td>
-	</tr>
-
-</table>
-
-<?= form_close(); ?>
-
