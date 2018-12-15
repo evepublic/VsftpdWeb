@@ -4,6 +4,8 @@ require_once 'Abstract_vstpdweb.php';
 
 class Log extends Abstract_Vstpdweb
 {
+	protected $title = 'FTP Log';
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -16,9 +18,6 @@ class Log extends Abstract_Vstpdweb
 
 		$data['log_data'] = $this->log_model->getLogData();
 
-		$data['title'] = 'FTP LOG';
-
-		$data['header'] = 'templates/header';
 		$data['content'] = 'log/index';
 		$this->load->view('templates/main', $data);
 	}

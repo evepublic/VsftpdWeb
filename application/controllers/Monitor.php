@@ -4,6 +4,8 @@ require_once 'Abstract_vstpdweb.php';
 
 class Monitor extends Abstract_Vstpdweb
 {
+	protected $title = 'Service Monitor';
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -12,15 +14,13 @@ class Monitor extends Abstract_Vstpdweb
 
 	public function index()
 	{
-		$data = $this->getSiteData();
-
-		$data['title'] = 'FTP Monitor';
 		header("refresh: 5;");
+
+		$data = $this->getSiteData();
 
 		$data['mon1'] = $this->monitor_model->getVsftpdProcesses();
 		$data['mon2'] = $this->monitor_model->getVsftpdConnectedUsers(); // does not work, ftp users are shown 'gone - no logout'
 
-		$data['header'] = 'templates/header';
 		$data['content'] = 'monitor/index';
 		$this->load->view('templates/main', $data);
 	}

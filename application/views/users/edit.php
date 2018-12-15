@@ -1,88 +1,92 @@
-<h1>Change FTP User settings : <?= $user_item['username'] ?></h1>
-<?= form_open('users/change'); ?>
-<input type="hidden" name="id" value="<?= $user_item['id'] ?>">
+<h1><?= $title ?></h1>
+
+<h2 id="users_update_password">Update password</h2>
+
+<?= form_submit_flash_message('users_update_password'); ?>
+
+<?= form_open('users/updatepassword', ['class' => 'form-horizontal']); ?>
+
+<input type="hidden" name="user_id" value="<?= $user_item['id'] ?>">
+
+<div class="form-group">
+	<label class="control-label col-sm-2" for="password">Password:</label>
+	<div class="col-sm-3">
+		<input type="password" class="form-control" id="password" placeholder="Enter password" name="password" required>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="control-label col-sm-2" for="confirmpassword">Confirm password:</label>
+	<div class="col-sm-3">
+		<input type="password" class="form-control" id="confirmpassword" placeholder="Confirm password" name="confirmpassword" required>
+	</div>
+</div>
+
+<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-3">
+		<input class="btn btn-default" type="submit" value="Save password">
+	</div>
+</div>
+
+<?= form_close(); ?>
+
+
+<h2 id="users_update_permissions">Update permissions</h2>
+
+<?= form_submit_flash_message('users_update_permissions'); ?>
+
+<?= form_open('users/updatepermissions', ['class' => 'form-horizontal']); ?>
+
+<input type="hidden" name="user_id" value="<?= $user_item['id'] ?>">
+
+<div class="form-group">
+	<label class="control-label col-sm-2" for="permissions_r">Permissions:</label>
+	<div class="col-sm-4">
+		<div>
+			<input type="radio" id="permissions_r" name="permissions" <?= ($user_item['perm'] === 'r') ? 'checked' : ''; ?> value="r"> Read only
+		</div>
+		<div>
+			<input type="radio" name="permissions" <?= ($user_item['perm'] === 'wd') ? 'checked' : ''; ?> value="wd"> Read / Write (Delete / Rename restriction)
+		</div>
+		<div>
+			<input type="radio" name="permissions" <?= ($user_item['perm'] === 'w') ? 'checked' : ''; ?> value="w"> Read / Write
+		</div>
+	</div>
+</div>
+
+<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-3">
+		<input class="btn btn-default" type="submit" value="Save">
+	</div>
+</div>
+
+<?= form_close(); ?>
+
+
+<h2 id="users_delete_user">Delete user</h2>
+
+<?= form_submit_flash_message('users_delete_user'); ?>
+
+<p>Deleting the user will remove its credentials and ALL its data in "<?= $storage_dir_user ?>".</p>
+<p class="text-danger">THIS CANNOT BE UNDONE!</p>
+<p>To confirm deletion of this user, type its username.</p>
+
+<?= form_open('users/delete', ['class' => 'form-horizontal']); ?>
+
+<input type="hidden" name="user_id" value="<?= $user_item['id'] ?>">
 <input type="hidden" name="username" value="<?= $user_item['username'] ?>">
-<input type="hidden" name="disk1" value="<?= $getdisk1 ?>">
-<input type="hidden" name="disk2" value="<?= $getdisk2 ?>">
 
-<table align="center">
+<div class="form-group">
+	<label class="control-label col-sm-2" for="username">Username:</label>
+	<div class="col-sm-3">
+		<input type="text" class="form-control" id="username" placeholder="Enter username" name="inputusername" required>
+	</div>
+</div>
 
-	<colgroup>
-		<col width="20%">
-		<col width="20%">
-		<col width="60%">
-	</colgroup>
+<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-3">
+		<input class="btn btn-danger" type="submit" value="Delete user">
+	</div>
+</div>
 
-	<tr>
-		<td>Select path:</td>
-		<td>
-			<input type="radio" name="dir" value="def" <?php if ($checked == 1) echo 'checked'; ?> /> Default user path
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td>
-			<input type="radio" name="dir" value="disk1" <?php if ($checked == 2) echo 'checked'; ?> /> <?= $getdisk1 ?>
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td>
-			<input type="radio" name="dir" value="disk2" <?php if ($checked == 3) echo 'checked'; ?> /> <?= $getdisk2 ?>
-		</td>
-	</tr>
-	<tr>
-		<td>Home dir:</td>
-		<td>
-			<input type="text" name="path" size=30 value="<?php if ($user_item['path'] != 'none') echo $checkpath; ?>">
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td>
-			<input type="checkbox" name="write" value="yes" <?php if ($user_item['perm'] == 'w' | $user_item['perm'] == 'wd') echo 'checked'; ?> />Write / Upload access
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td>
-			<input type="checkbox" name="delete" value="yes" <?php if ($user_item['perm'] == 'wd') echo 'checked'; ?> />Delete / Rename restriction
-		</td>
-	</tr>
-	<tr>
-		<td colspan="3" align="center"><input type="submit" name="submit" value="Save"></td>
-	</tr>
-
-</table>
 <?= form_close(); ?>
-
-<h1>Change FTP User Password</h1>
-<?= form_open('users/changepassword'); ?>
-<input type="hidden" name="id" value="<?= $user_item['id'] ?>">
-
-<table align="center">
-
-	<colgroup>
-		<col width="20%">
-		<col width="20%">
-		<col width="60%">
-	</colgroup>
-
-	<tr>
-		<th colspan="3">New Password</th>
-	</tr>
-	<tr>
-		<td>Password:</td>
-		<td><input type="password" name="upass" size=30></td>
-	</tr>
-	<tr>
-		<td>Confirm Password:</td>
-		<td><input type="password" name="repass" size=30></td>
-	</tr>
-	<tr>
-		<td colspan="3" align="center"><input type="submit" name="submit" value="Save"></td>
-	</tr>
-
-</table>
-<?= form_close(); ?>
-

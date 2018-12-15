@@ -34,10 +34,10 @@ class Log_model extends CI_Model
 	public function getLogData()
 	{
 		$this->load->model('settings_model');
-		$log_path = $this->settings_model->get_settings('log_path');
+		$log_path = $this->settings_model->get('log_path');
 
 		if (!file_exists($log_path)) {
-			return ['error' => 'The log file cannot be found. Check the log file path: ' . htmlentities($log_path)];
+			return ['error' => 'The log file cannot be found. Check the log file path: ' . $log_path];
 		} elseif (filesize($log_path) === 0) {
 			return ['error' => 'The log file is empty'];
 		}
@@ -75,9 +75,12 @@ class Log_model extends CI_Model
 			// user
 			$user = $logitem['username'];
 
-			$info = implode(' ', array_slice($logitem, 0, 7));
+			$date = $logitem['current-time_DDD'] . ' ' . $logitem['current-time_MMM'] . ' ' . $logitem['current-time_dd'];
+			$time = $logitem['current-time_hh:mm:ss'];
+			$remotehost = $logitem['remote-host'];
+			$transfertime = $logitem['transfer-time'];
 
-			$result[] = compact(['info', 'msize', 'state', 'user', 'name']);
+			$result[] = compact(['info', 'date', 'time', 'remotehost', 'transfertime', 'msize', 'state', 'user', 'name']);
 		}
 		pclose($handle);
 
