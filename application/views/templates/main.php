@@ -10,8 +10,10 @@
 	<?php $this->load->view($header); ?>
 </div>
 
-<div class="container content-area">
-	<?php $this->load->view($content); ?>
+<div class="container">
+	<div class="content-area">
+		<?php $this->load->view($content); ?>
+	</div>
 </div>
 
 <div class="container">

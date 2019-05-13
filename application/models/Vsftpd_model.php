@@ -28,7 +28,7 @@ class Vsftpd_model extends CI_Model
 	public function getConfigFileUser($username)
 	{
 		$user_config_dir = $this->config_settings['user_config_dir'];
-		if (substr(user_config_dir, -1) !== '/') $user_config_dir .= '/';
+		if (substr('user_config_dir', -1) !== '/') $user_config_dir .= '/';
 		return $user_config_dir .= $username;
 	}
 

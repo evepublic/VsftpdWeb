@@ -163,7 +163,7 @@ CREATE TABLE `settings` (
   `defval` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +172,7 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES (1,'site_name','Demo',''),(2,'user_path','/mnt/ftpusers/',''),(3,'disk1','/mnt/ftpusers/','disk 1'),(4,'disk2','/mnt/ftpusers/','disk 2'),(5,'disk3','/','root'),(6,'log_path','/var/log/xferlog',''),(7,'mail_server','mail.mail.com',''),(8,'mail_port','25',''),(9,'mail_user','username@mail.com',''),(10,'mail_password','mailpassword',''),(11,'mail_from','FTP Report','');
+INSERT INTO `settings` VALUES (1,'site_name','Demo',''),(2,'user_path','/mnt/ftpusers/',''),(3,'disk1','/mnt/ftpusers/','disk 1'),(4,'disk2','/mnt/ftpusers/','disk 2'),(5,'disk3','/','root'),(6,'log_path','/var/log/xferlog',''),(7,'mail_server','mail.mail.com',''),(8,'mail_port','25',''),(9,'mail_user','username@mail.com',''),(10,'mail_password','mailpassword',''),(11,'mail_from','FTP Report',''),(101,'vsftpd_config_path','/etc/vsftpd.conf',''),(102,'default_permissions','r','');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 

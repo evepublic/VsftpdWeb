@@ -15,7 +15,7 @@
 						<td><?= $disk2['space'] ?> free</td>
 					</tr>
 					<tr>
-						<td><?= $disk1['disk'] ?></td>
+						<td><?= $disk2['disk'] ?></td>
 						<td>/</td>
 						<td><?= $disk2['space'] ?> free</td>
 					</tr>
