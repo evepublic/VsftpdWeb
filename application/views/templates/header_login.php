@@ -1,3 +1,11 @@
-<h1 id="head">
-	<span class="headspan">VsftpdWeb FTP Administration : <?= $site_name ?></span>
-</h1>
+<nav class="navbar navbar-inverse">
+
+	<div class="container-fluid" id="navbartop">
+
+		<div class="navbar-header">
+			<span class="navbar-brand">VsftpdWeb FTP Administration: <?= htmlentities($site_name); ?></span>
+		</div>
+
+	</div>
+
+</nav>

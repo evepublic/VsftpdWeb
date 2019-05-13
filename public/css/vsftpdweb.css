@@ -4,8 +4,8 @@ body {
 	background: #F7F4E9;
 }
 
-.navbar  {
-	margin-top:10px;
+.navbar {
+	margin-top: 10px;
 
 }
 
@@ -17,15 +17,15 @@ body {
 	background: #093abe;
 }
 
-
 .navbar li {
 	color: white;
 
 }
 
 .footer {
-	margin-top:10px;
-	margin-bottom:10px;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 	background: white;
 }
 
@@ -45,7 +45,6 @@ input[type=submit]:hover, input[type=button] {
 	background: #ea7c2a;
 }
 
-
 .container {
 
 }
@@ -57,11 +56,11 @@ input[type=submit]:hover, input[type=button] {
 .content-area {
 	background: white;
 	min-height: 400px;
+	padding: 20px;
 }
 
-
 .table > thead > tr > td {
-border-top: 0px;
+	border-top: 0px;
 }
 
 #diskspace > thead > tr > th,
@@ -72,10 +71,14 @@ border-top: 0px;
 #diskspace > tfoot > tr > td {
 	border-top: 0px;
 	padding-top: 0px;
-	padding-right: 0px;
 	padding: 0px;
+	padding-right: 10px;
 }
 
 #diskspace {
 	margin-bottom: 0px;
+}
+
+.table td {
+	padding: 5px;
 }
