@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-abstract class Abstract_Vstpdweb extends CI_Controller
+abstract class MY_Controller extends CI_Controller
 {
 	protected $title;
 
@@ -17,19 +17,15 @@ abstract class Abstract_Vstpdweb extends CI_Controller
 		}
 	}
 
-	private function getDiskSpaceData()
-	{
-		$this->load->model('disk_model');
-		return $this->disk_model->getDiskSpaceData();
-	}
-
 	protected function getSiteData()
 	{
-		$data = $this->getDiskSpaceData();
+		$this->load->model('disk_model');
+		$data = $this->disk_model->getDiskSpaceData();
+
 		$this->load->model('settings_model');
-		$data['site_name_display'] = $this->settings_model->getSiteName();
+		$data['site_name_display'] = $this->settings_model->getSiteNameDisplay();
 		$data['title'] = $this->title;
-		$data['header'] = 'templates/header';
+
 		return $data;
 	}
 

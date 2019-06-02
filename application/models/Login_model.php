@@ -21,7 +21,7 @@ class Login_model extends CI_Model
 		}
 
 		// Check if the password is correct
-		$database_password_hash = $query->row_array()['password'];
+		$database_password_hash = $query->row()->password;
 		return password_verify($password, $database_password_hash);
 	}
 
@@ -30,12 +30,11 @@ class Login_model extends CI_Model
 		// validate current password
 		$validation_result = $this->validate($username, $currentpassword);
 		if ($validation_result !== true) {
-			return ['error' => 'Your current password is incorrect.'];
+			return ['error' => 'The current password is incorrect.'];
 		}
 
 		// update password
-		$this->db->where('username', $username);
-		$this->db->update($this->table, ['password' => password_hash($newpassword, PASSWORD_DEFAULT)]);
+		$this->db->where('username', $username)->update($this->table, ['password' => password_hash($newpassword, PASSWORD_DEFAULT)]);
 		return true;
 	}
 }

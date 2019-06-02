@@ -3,7 +3,7 @@
 if (!function_exists('public_path')) {
 	function public_path()
 	{
-		$script_path_split = explode('/', $_SERVER["SCRIPT_FILENAME"]);
+		$script_path_split = explode('/', $_SERVER['SCRIPT_FILENAME']);
 		if (count($script_path_split) >= 2 && $script_path_split[count($script_path_split) - 2] === 'public') {
 			return '';
 		} else {

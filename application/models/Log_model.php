@@ -33,54 +33,62 @@ class Log_model extends CI_Model
 
 	public function getLogData()
 	{
-		$this->load->model('settings_model');
-		$log_path = $this->settings_model->get('log_path');
+		$this->load->model('vsftpd_model');
+		$xferlog_file = $this->vsftpd_model->get('xferlog_file');
 
-		if (!file_exists($log_path)) {
-			return ['error' => 'The log file cannot be found. Check the log file path: ' . $log_path];
-		} elseif (filesize($log_path) === 0) {
+		if (!file_exists($xferlog_file)) {
+			return ['error' => 'The log file cannot be found. Check the log file path: ' . $xferlog_file];
+		} elseif (filesize($xferlog_file) === 0) {
 			return ['error' => 'The log file is empty'];
 		}
 
 		$result = [];
 		$ic = 0;
 		$ic_max = 200; // stops after this number of rows
-		$handle = popen("tac $log_path ", "r");
+		$handle = popen("tac $xferlog_file ", "r");
 		while ((($buffer = fgets($handle, 4096)) !== false) && ++$ic <= $ic_max) {
 			// since xferlog is delimited by spaces, simply tokenize by spaces (spaces in file names are mapped to _)
 			$logitem_tmp = explode(' ', trim($buffer));
+
+			// current-time_dd does not have a trailing 0, So shift field if current-time_dd < 10
+			$current_time_dd_index = array_search('current-time_dd', $this->xferlog_fields, true);
+			if ($logitem_tmp[$current_time_dd_index] === '') {
+				array_splice($logitem_tmp, $current_time_dd_index, 1);
+			}
+
 			foreach ($this->xferlog_fields as $index => $field_name) {
 				$logitem[$field_name] = $logitem_tmp[$index];
 			}
 
-			// size
-			$size = $logitem['file-size'];
-			$si_prefix = array('B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB');
-			$base = 1024;
-			if ($size == 0) {
-				$msize = '0 ' . $si_prefix[0];
-			} else {
-				$class = min((int)log((int)$size, $base), count($si_prefix) - 1);
-				$msize = sprintf('%1.2f', $size / pow($base, $class)) . ' ' . $si_prefix[$class];
-			}
-
-			// name
-			$name = $logitem['filename'];
-
-			// state
-			if ($logitem['direction'] == 'i') $state = 'Uploaded';
-			elseif ($logitem['direction'] == 'o') $state = 'Downloaded';
-			elseif ($logitem['direction'] == 'd') $state = 'Deleted';
-
-			// user
-			$user = $logitem['username'];
-
 			$date = $logitem['current-time_DDD'] . ' ' . $logitem['current-time_MMM'] . ' ' . $logitem['current-time_dd'];
 			$time = $logitem['current-time_hh:mm:ss'];
-			$remotehost = $logitem['remote-host'];
-			$transfertime = $logitem['transfer-time'];
 
-			$result[] = compact(['info', 'date', 'time', 'remotehost', 'transfertime', 'msize', 'state', 'user', 'name']);
+			$transfertime = $logitem['transfer-time'] . ' s';
+
+			$remotehost = $logitem['remote-host'];
+
+			$size = $logitem['file-size'];
+			$si_prefix = ['B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB'];
+			$base = 1024;
+			if ($size == 0) {
+				$filesize = '0 ' . $si_prefix[0];
+			} else {
+				$class = min((int)log((int)$size, $base), count($si_prefix) - 1);
+				$filesize = sprintf('%1.2f', $size / pow($base, $class)) . ' ' . $si_prefix[$class];
+			}
+
+			$filename = $logitem['filename'];
+
+			if ($logitem['direction'] == 'i') $action = 'uploaded';
+			elseif ($logitem['direction'] == 'o') $action = 'downloaded';
+			elseif ($logitem['direction'] == 'd') $action = 'deleted';
+
+			$username = $logitem['username'];
+
+			if ($logitem['completion-status'] == 'c') $status = 'complete';
+			elseif ($logitem['completion-status'] == 'i') $status = 'incomplete';
+
+			$result[] = compact(['date', 'time', 'transfertime', 'remotehost', 'filesize', 'filename', 'action', 'username', 'status']);
 		}
 		pclose($handle);
 

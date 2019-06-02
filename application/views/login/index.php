@@ -1,26 +1,27 @@
-<div class="grid_16">
-	<h1>Login</h1>
+<h1 id="login"><?= $title ?></h1>
+
+<?= form_submit_flash_message('login'); ?>
+
+<?= form_open('login/process', ['class' => 'form-horizontal']); ?>
+
+<div class="form-group">
+	<label class="control-label col-sm-1" for="username">Username:</label>
+	<div class="col-sm-3">
+		<input type='text' class="form-control" id="username" name="username" placeholder="Enter username" required>
+	</div>
 </div>
 
-<?= form_open('login/process'); ?>
-<table>
+<div class="form-group">
+	<label class="control-label col-sm-1" for="password">Password:</label>
+	<div class="col-sm-3">
+		<input type='password' class="form-control" id="password" name="password" placeholder="Enter password" required>
+	</div>
+</div>
 
-	<colgroup>
-		<col width="30%">
-	</colgroup>
+<div class="form-group">
+	<div class="col-sm-offset-1 col-sm-3">
+		<input class="btn btn-default" type="submit" value="Log In">
+	</div>
+</div>
 
-	<tr>
-		<td>Username:</td>
-		<td><input type="text" name="username" size=30></td>
-	</tr>
-	<tr>
-		<td>Password:</td>
-		<td><input type="password" name="password" size=30></td>
-	</tr>
-	<tr>
-		<td colspan="2"><input type="submit" value="Log In"></td>
-	</tr>
-
-</table>
 <?= form_close(); ?>
-
