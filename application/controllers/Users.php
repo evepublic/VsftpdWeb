@@ -1,8 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once 'Abstract_vstpdweb.php';
-
-class Users extends Abstract_Vstpdweb
+class Users extends MY_Controller
 {
 	protected $title = 'FTP User Management';
 
@@ -11,22 +9,17 @@ class Users extends Abstract_Vstpdweb
 		parent::__construct();
 		$this->load->model('users_model');
 		$this->load->model('settings_model');
-		$this->load->model('vsftpd_model');
 		$this->load->library('form_validation');
 		$this->load->helper('submit');
 	}
 
-	/**
-	 * shows the index page
-	 */
 	public function index()
 	{
 		$data = $this->getSiteData();
 
 		$data['users'] = $this->users_model->getAll();
+		$data['user_base_path'] = $this->settings_model->get('user_base_path');
 		$data['default_permissions'] = $this->settings_model->get('default_permissions');
-
-		$data['storage_dir'] = $this->vsftpd_model->getStorageDirUser('');
 
 		$data['content'] = 'users/index';
 		$this->load->view('templates/main', $data);
@@ -34,9 +27,10 @@ class Users extends Abstract_Vstpdweb
 
 	public function create()
 	{
-		$this->form_validation->set_rules('username', 'username', 'required|callback_validate_username');
-		$this->form_validation->set_rules('password', 'password', 'required|min_length[4]');
+		$this->form_validation->set_rules('username', 'username', 'callback_validate_username');
+		$this->form_validation->set_rules('password', 'password', 'callback_validate_password');
 		$this->form_validation->set_rules('confirmpassword', 'confirmation password', 'required|matches[password]');
+		$this->form_validation->set_rules('storage_directory', 'storage directory', 'callback_validate_storage_directory');
 		$this->form_validation->set_rules('permissions', 'permissions', 'required|callback_validate_permissions');
 
 		$error = false;
@@ -46,7 +40,7 @@ class Users extends Abstract_Vstpdweb
 		}
 
 		if (!$error) {
-			$create_user_result = $this->users_model->createUser($this->input->post('username'), $this->input->post('password'), $this->input->post('permissions'));
+			$create_user_result = $this->users_model->createUser($this->input->post('username'), $this->input->post('password'), $this->input->post('storage_directory'), $this->input->post('permissions'));
 			if (isset($create_user_result['error'])) {
 				$error = true;
 				$this->session->set_flashdata('users_create_user', ['error' => $create_user_result['error']]);
@@ -61,13 +55,90 @@ class Users extends Abstract_Vstpdweb
 		redirect('users');
 	}
 
-	public function validate_username($username)
+
+	public function edit($user_id = null)
 	{
-		if (($validation_result = $this->users_model->validateUsername($username)) === true) {
-			return true;
+		if ($user_id === null or (($user = $this->users_model->get($user_id)) === null)) {
+			redirect('users');
+		}
+
+		$data = $this->getSiteData();
+
+		$data['title'] .= ' - edit user ' . htmlentities($user->username);
+		$data['user_base_path'] = $this->settings_model->get('user_base_path');
+		$data['user'] = $user;
+
+		$data['content'] = 'users/edit';
+		$this->load->view('templates/main', $data);
+	}
+
+	public function updatepassword()
+	{
+		$this->form_validation->set_rules('password', 'password', 'callback_validate_password');
+		$this->form_validation->set_rules('confirmpassword', 'confirm password', 'required|matches[password]');
+
+		if ($this->form_validation->run() === false) {
+			$this->session->set_flashdata('users_update_password', ['error' => validation_errors()]);
 		} else {
-			$this->form_validation->set_message(__FUNCTION__, $validation_result['error']);
-			return false;
+			$this->users_model->changePassword($this->input->post('user_id'), $this->input->post('password'));
+			$this->session->set_flashdata('users_update_password', ['success' => 'Password updated successfully.']);
+		}
+
+		$this->session->set_flashdata('form_submit_scroll_id', 'users_update_password');
+		redirect('users/edit/' . $this->input->post('user_id'));
+	}
+
+	public function updatepermissions()
+	{
+		$this->form_validation->set_rules('permissions', 'permissions', 'required|callback_validate_permissions');
+
+		if ($this->form_validation->run() === false) {
+			$this->session->set_flashdata('users_update_permissions', ['error' => validation_errors()]);
+		} else {
+			$update_permissions_result = $this->users_model->updatePermissions($this->input->post('user_id'), $this->input->post('permissions'));
+			if (isset($update_permissions_result['error'])) {
+				$this->session->set_flashdata('users_update_permissions', ['error' => $update_permissions_result['error']]);
+			} else {
+				$this->session->set_flashdata('users_update_permissions', ['success' => 'Permissions updated successfully.']);
+			}
+		}
+
+		$this->session->set_flashdata('form_submit_scroll_id', 'users_update_permissions');
+		redirect('users/edit/' . $this->input->post('user_id'));
+	}
+
+	public function updatestoragedirectory()
+	{
+		$this->form_validation->set_rules('storage_directory', 'storage directory', 'callback_validate_storage_directory');
+
+		if ($this->form_validation->run() === false) {
+			$this->session->set_flashdata('users_update_directory', ['error' => validation_errors()]);
+		} else {
+			$update_storage_directory_result = $this->users_model->updateStorageDirectory($this->input->post('user_id'), $this->input->post('storage_directory'));
+			if (isset($update_storage_directory_result['error'])) {
+				$this->session->set_flashdata('users_update_directory', ['error' => $update_storage_directory_result['error']]);
+			} else {
+				$this->session->set_flashdata('users_update_directory', ['success' => 'Storage directory updated successfully.']);
+			}
+		}
+
+		$this->session->set_flashdata('form_submit_scroll_id', 'users_update_directory');
+		redirect('users/edit/' . $this->input->post('user_id'));
+	}
+
+	public function delete()
+	{
+		$this->form_validation->set_rules('username', 'username', 'required');
+		$this->form_validation->set_rules('inputusername', 'input username', 'required|matches[username]');
+
+		$this->session->set_flashdata('form_submit_scroll_id', 'users_delete_user');
+		if ($this->form_validation->run() === false) {
+			$this->session->set_flashdata('users_delete_user', ['error' => validation_errors()]);
+			redirect('users/edit/' . $this->input->post('user_id'));
+		} else {
+			$this->users_model->deleteUser($this->input->post('user_id'));
+			$this->session->set_flashdata('users_delete_user', ['success' => 'User "' . $this->input->post('username') . '" deleted successfully.']);
+			redirect('users');
 		}
 	}
 
@@ -76,13 +147,13 @@ class Users extends Abstract_Vstpdweb
 		$this->load->model('batchimport_model');
 
 		$error = false;
-		if (!(isset($_FILES['import_file']['tmp_name']) and strlen($_FILES['import_file']['tmp_name']))) {
+		if (!(isset($_FILES['users_csv_file']['tmp_name']) and strlen($_FILES['users_csv_file']['tmp_name']))) {
 			$error = true;
 			$this->session->set_flashdata('users_batchimport', ['error' => 'Please select a file.']);
 		}
 
 		if (!$error) {
-			$batchimport_result = $this->batchimport_model->importCSVFile($_FILES['import_file']['tmp_name']);
+			$batchimport_result = $this->batchimport_model->importCSVFile($_FILES['users_csv_file']['tmp_name']);
 			if (isset($batchimport_result['error'])) {
 				$error = true;
 				$this->session->set_flashdata('users_batchimport', ['error' => $batchimport_result['error']]);
@@ -95,73 +166,33 @@ class Users extends Abstract_Vstpdweb
 		redirect('users');
 	}
 
-	/**
-	 * shows the edit page
-	 *
-	 * @param int $user_id the id of the user
-	 */
-	public function edit($user_id = null)
+	public function validate_username($username)
 	{
-		if ($user_id === null or (($user_item = $this->users_model->get($user_id)) === null)) {
-			redirect('users');
+		if (($validation_result = $this->users_model->validateUsername($username)) === true) {
+			return true;
+		} else {
+			$this->form_validation->set_message(__FUNCTION__, $validation_result['error']);
+			return false;
 		}
-
-		$data = $this->getSiteData();
-
-		$data['title'] .= ' - edit user ' . htmlentities($user_item['username']);
-
-		$data['user_item'] = $user_item;
-
-		$this->load->model('vsftpd_model');
-		$data['storage_dir_user'] = $this->vsftpd_model->getStorageDirUser($user_item['username']);
-
-		$data['content'] = 'users/edit';
-		$this->load->view('templates/main', $data);
 	}
 
-	public function updatepassword()
+	public function validate_password($password)
 	{
-		$this->form_validation->set_rules('password', 'password', 'required|min_length[4]');
-		$this->form_validation->set_rules('confirmpassword', 'confirm password', 'required|matches[password]');
-
-		if ($this->form_validation->run() === false) {
-			$this->session->set_flashdata('users_update_password', ['error' => validation_errors()]);
+		if (($validation_result = $this->users_model->validatePassword($password)) === true) {
+			return true;
 		} else {
-			$this->session->set_flashdata('users_update_password', ['success' => 'Password updated.']);
-			$this->users_model->changePassword($this->input->post('user_id'), $this->input->post('password'));
+			$this->form_validation->set_message(__FUNCTION__, $validation_result['error']);
+			return false;
 		}
-
-		$this->session->set_flashdata('form_submit_scroll_id', 'users_update_password');
-		redirect('users/edit/' . $this->input->post('user_id'));
 	}
 
-	public function updatepermissions()
+	public function validate_storage_directory($storage_directory)
 	{
-		$this->form_validation->set_rules('permissions', 'permissions', 'required');
-
-		if ($this->form_validation->run() === false) {
+		if (($validation_result = $this->users_model->validateStorageDirectory($storage_directory)) === true) {
+			return true;
 		} else {
-			$this->users_model->updatePermissions($this->input->post('user_id'), $this->input->post('permissions'));
-			$this->session->set_flashdata('users_update_permissions', ['success' => 'Permissions updated.']);
-		}
-
-		$this->session->set_flashdata('form_submit_scroll_id', 'users_update_permissions');
-		redirect('users/edit/' . $this->input->post('user_id'));
-	}
-
-	public function delete()
-	{
-		$this->form_validation->set_rules('username', 'username', 'required');
-		$this->form_validation->set_rules('inputusername', 'username', 'required|matches[username]');
-
-		$this->session->set_flashdata('form_submit_scroll_id', 'users_delete_user');
-		if ($this->form_validation->run() === false) {
-			$this->session->set_flashdata('users_delete_user', ['error' => validation_errors()]);
-			redirect('users/edit/' . $this->input->post('user_id'));
-		} else {
-			$this->users_model->deleteUser($this->input->post('user_id'));
-			$this->session->set_flashdata('users_delete_user', ['success' => 'User "' . $this->input->post('username') . '" deleted.']);
-			redirect('users');
+			$this->form_validation->set_message(__FUNCTION__, $validation_result['error']);
+			return false;
 		}
 	}
 }

@@ -3,7 +3,7 @@
 class Vsftpd_model extends CI_Model
 {
 	private $config_defaults = [
-		'xferlog_file' => '/var/log/xferlog'
+		'xferlog_file' => '/var/log/xferlog',
 	];
 	private $config_settings;
 
@@ -18,17 +18,13 @@ class Vsftpd_model extends CI_Model
 		return $this->config_settings[$name];
 	}
 
-	public function getStorageDirUser($username)
-	{
-		$result = str_replace($this->config_settings['user_sub_token'], $username, $this->config_settings['local_root'], $replace_count);
-		if ($replace_count !== 1) throw new Exception('Invalid user storage directory');
-		return $result;
-	}
-
 	public function getConfigFileUser($username)
 	{
-		$user_config_dir = $this->config_settings['user_config_dir'];
-		if (substr('user_config_dir', -1) !== '/') $user_config_dir .= '/';
+		if (($user_config_dir = $this->config_settings['user_config_dir']) === null) {
+			return false;
+		}
+
+		if (substr($user_config_dir, -1) !== '/') $user_config_dir .= '/';
 		return $user_config_dir .= $username;
 	}
 

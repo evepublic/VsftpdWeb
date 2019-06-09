@@ -1,8 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once 'Abstract_vstpdweb.php';
-
-class Monitor extends Abstract_Vstpdweb
+class Monitor extends MY_Controller
 {
 	protected $title = 'Service Monitor';
 
@@ -19,7 +17,7 @@ class Monitor extends Abstract_Vstpdweb
 		$data = $this->getSiteData();
 
 		$data['mon1'] = $this->monitor_model->getVsftpdProcesses();
-		$data['mon2'] = $this->monitor_model->getVsftpdConnectedUsers(); // does not work, ftp users are shown 'gone - no logout'
+		$data['mon2'] = $this->monitor_model->getVsftpdConnectedUsers(); // NOTE: does not work, ftp users are shown 'gone - no logout'
 
 		$data['content'] = 'monitor/index';
 		$this->load->view('templates/main', $data);

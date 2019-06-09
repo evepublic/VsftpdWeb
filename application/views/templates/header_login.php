@@ -3,7 +3,7 @@
 	<div class="container-fluid" id="navbartop">
 
 		<div class="navbar-header">
-			<span class="navbar-brand">VsftpdWeb FTP Administration: <?= htmlentities($site_name); ?></span>
+			<span class="navbar-brand">VsftpdWeb FTP Administration: <?= $site_name_display ?></span>
 		</div>
 
 	</div>

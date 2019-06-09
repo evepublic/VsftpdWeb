@@ -15,6 +15,7 @@
 <h2>Active users</h2>
 
 <table class="table">
+
 	<tr>
 		<th>Username</th>
 		<th>Action</th>
@@ -28,6 +29,7 @@
 	if (isset($mon1['children'])) foreach ($mon1['children'] as $child) {
 		if (isset($child['children'])) foreach ($child['children'] as $child2) {
 			?>
+
 			<tr>
 
 				<td>

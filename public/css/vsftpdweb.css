@@ -1,84 +1,108 @@
 /* colors */
-
 body {
-	background: #F7F4E9;
+	background-color: #f8f4e0;
 }
 
 .navbar {
-	margin-top: 10px;
-
-}
-
-.navbar {
-	background: #092765;
+	background-color: #136;
 }
 
 #navbarbottom {
-	background: #093abe;
+	background-color: #14b;
 }
 
-.navbar li {
-	color: white;
-
+.navbar .navbar-brand {
+	color: #fff;
 }
 
-.footer {
-	padding: 10px;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	background: white;
+.navbar .navbar-right li {
+	color: #fff;
 }
 
-.navbar-inverse .navbar-nav > li > a {
-	color: white;
+.navbar .navbar-nav > li > a {
+	color: #fff;
 }
 
-.navbar-inverse .navbar-brand:focus, .navbar-inverse .navbar-brand {
-	color: white;
+.navbar .navbar-nav > li > a:hover {
+	color: #eee;
+	background-color: #0838a0;
 }
 
-input[type=submit], input[type=button] {
-	background: #FF7226;
-}
-
-input[type=submit]:hover, input[type=button] {
-	background: #ea7c2a;
-}
-
-.container {
-
-}
-
-.navbar {
-	border-radius: 0 !important;
+.navbar .navbar-nav > li > a:active {
+	color: #ccc;
+	background-color: #003098;
 }
 
 .content-area {
-	background: white;
+	background-color: #fff;
+}
+
+.footer {
+	background-color: #fff;
+}
+
+.btn-default {
+	color: #fff;
+	background-color: #f63;
+	border-color: #e52;
+}
+
+.btn-default:focus {
+	color: #fff;
+	background-color: #e52;
+	border-color: #a30;
+}
+
+.btn-default:hover {
+	color: #fff;
+	background-color: #e52;
+	border-color: #d41;
+}
+
+.btn-default:active {
+	color: #fff;
+	background-color: #e52;
+	border-color: #d41;
+}
+
+.btn-default:active:hover,
+.btn-default:active:focus {
+	color: #fff;
+	background-color: #d41;
+	border-color: #a30;
+}
+
+.user-base-path {
+	color: #999;
+}
+
+/* /colors */
+
+.navbar {
+	margin-top: 10px;
+	margin-bottom: 15px;
+	border-radius: 0 !important;
+}
+
+.diskspace {
+	padding: 15px;
+}
+
+.diskspace li {
+	padding-left: 8px;
+}
+
+.content-area {
 	min-height: 400px;
 	padding: 20px;
 }
 
-.table > thead > tr > td {
-	border-top: 0px;
+.footer {
+	padding: 10px 20px;
+	margin-top: 15px;
+	margin-bottom: 10px;
 }
 
-#diskspace > thead > tr > th,
-#diskspace > tbody > tr > th,
-#diskspace > tfoot > tr > th,
-#diskspace > thead > tr > td,
-#diskspace > tbody > tr > td,
-#diskspace > tfoot > tr > td {
-	border-top: 0px;
-	padding-top: 0px;
-	padding: 0px;
-	padding-right: 10px;
-}
-
-#diskspace {
-	margin-bottom: 0px;
-}
-
-.table td {
-	padding: 5px;
+.uploadfilebutton {
+	padding: 6px 0px 0px 0px;
 }

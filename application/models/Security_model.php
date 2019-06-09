@@ -10,23 +10,26 @@ class Security_model extends CI_Model
 		$this->load->database();
 	}
 
+	/**
+	 * @see https://github.com/NigelCunningham/pam-MySQL
+	 */
 	public function getPasswordHash($password)
 	{
-		$security_algo = $this->db->get_where($this->table, ['active' => 1])->row_array();
+		$encryption_algorithm = $this->getEncryptionAlgorithm();
 		$result = null;
-		switch ($security_algo['code']) {
+		switch ($encryption_algorithm->code) {
 			case 'PLAIN':
 				$result = $password;
 				break;
 
 			case 'CRYPT':
-				$result = $this->getCryptHash($password, $security_algo);
+				$result = $this->getCryptHash($password, $encryption_algorithm);
 				break;
 
 			case 'MYSQL':
-				$query = 'SELECT PASSWORD(' . $this->db->escape($password) . ') AS mysql_password_hash;';
-				$query_result = $this->db->query($query);
-				$result = $query_result->row_array()['mysql_password_hash'];
+				$sql = 'SELECT PASSWORD(' . $this->db->escape($password) . ') AS mysql_password_hash;';
+				$query = $this->db->query($sql);
+				$result = $query->row()->mysql_password_hash;
 				break;
 
 			case 'MD5':
@@ -47,19 +50,24 @@ class Security_model extends CI_Model
 				break;
 
 			default:
-				throw new Exception('Unknown security algorithm: ' . (string)$security_algo['code']);
+				throw new Exception('Unknown security algorithm: ' . (string)$encryption_algorithm->code);
 		}
 
 		return $result;
 	}
 
+	public function getEncryptionAlgorithm()
+	{
+		return $this->db->get_where($this->table, ['active' => 1])->row();
+	}
+
 	/*
 	* @see http://php.net/manual/en/function.crypt.php
 	*/
-	private function getCryptHash($password, $security_algo)
+	private function getCryptHash($password, $encryption_algorithm)
 	{
 		$result = null;
-		switch ($security_algo['subcode']) {
+		switch ($encryption_algorithm->subcode) {
 			case 'STD_DES':
 				if (!defined('CRYPT_STD_DES')) throw new Exception('CRYPT_STD_DES is not defined');
 				$salt_param = self::generateSalt(2);
@@ -69,7 +77,7 @@ class Security_model extends CI_Model
 			case 'EXT_DES': // does not work on Ubuntu 18.04
 				if (!defined('CRYPT_EXT_DES')) throw new Exception('CRYPT_EXT_DES is not defined');
 				$id = '_';
-				$iteration_str = $this->getExtDESIterationString($security_algo['param']); // /... is 1 time, zzzz = 16777215 times
+				$iteration_str = $this->getExtDESIterationString($encryption_algorithm->param); // /... is 1 time, zzzz = 16777215 times
 				$salt = self::generateSalt(4);
 				$salt_param = $id . $iteration_str . $salt;
 				$result = crypt($password, $salt_param);
@@ -88,13 +96,13 @@ class Security_model extends CI_Model
 				// $2y - algo
 				// $xx - cost (range 04-31)
 				// $<22 characters salt> - possible last digit: O e u .
-				$result = password_hash($password, PASSWORD_BCRYPT, ['cost' => $security_algo['param']]);
+				$result = password_hash($password, PASSWORD_BCRYPT, ['cost' => $encryption_algorithm->param]);
 				break;
 
 			case 'SHA256':
 				if (!defined('CRYPT_SHA256')) throw new Exception('CRYPT_SHA256 is not defined');
 				$id = '$5';
-				$rounds_str = isset($security_algo['param']) ? '$rounds=' . $security_algo['param'] : '';
+				$rounds_str = isset($encryption_algorithm->param) ? '$rounds=' . $encryption_algorithm->param : '';
 				$salt = '$' . self::generateSalt(16);
 				$salt_param = $id . $rounds_str . $salt;
 				$result = crypt($password, $salt_param);
@@ -103,7 +111,7 @@ class Security_model extends CI_Model
 			case 'SHA512':
 				if (!defined('CRYPT_SHA512')) throw new Exception('CRYPT_SHA512 is not defined');
 				$id = '$6';
-				$rounds_str = isset($security_algo['param']) ? '$rounds=' . $security_algo['param'] : '';
+				$rounds_str = isset($encryption_algorithm->param) ? '$rounds=' . $encryption_algorithm->param : '';
 				$salt = '$' . self::generateSalt(16);
 				$salt_param = $id . $rounds_str . $salt;
 				$result = crypt($password, $salt_param);
@@ -114,7 +122,7 @@ class Security_model extends CI_Model
 				break;
 
 			default:
-				throw new Exception('Unknown crypt security algorithm: ' . $security_algo['subcode']);
+				throw new Exception('Unknown crypt security algorithm: ' . $encryption_algorithm->subcode);
 		}
 
 		return $result;

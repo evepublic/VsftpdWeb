@@ -3,12 +3,17 @@
 class Settings_model extends CI_Model
 {
 	private $table = 'settings';
-	private $settings;
+	private $settings = [];
 
 	public function __construct()
 	{
 		parent::__construct();
-		$this->settings = $this->getSettings();
+		$this->load->database();
+
+		$query = $this->db->get($this->table);
+		foreach ($query->result() as $setting) {
+			$this->settings[$setting->name] = $setting->value;
+		}
 	}
 
 	public function get($name)
@@ -16,27 +21,21 @@ class Settings_model extends CI_Model
 		return $this->settings[$name];
 	}
 
-	public function getSiteName()
+	public function getAll()
 	{
-		return (empty($this->settings['site_name'])) ? exec('hostname') : $this->settings['site_name'];
+		return $this->settings;
+	}
+
+	public function getSiteNameDisplay()
+	{
+		$site_name_display = (empty($this->settings['site_name'])) ? exec('hostname') : $this->settings['site_name'];
+		return htmlentities($site_name_display);
 	}
 
 	public function update($updated_settings)
 	{
 		foreach ($updated_settings as $name => $value) {
-			$this->db->where('name', $name);
-			$this->db->update($this->table, ['value' => $value]);
+			$this->db->where('name', $name)->update($this->table, ['value' => $value]);
 		}
-	}
-
-	private function getSettings()
-	{
-		$this->load->database();
-		$query = $this->db->get($this->table)->result_array();
-		$settings = [];
-		foreach ($query as $value) {
-			$settings[$value['name']] = $value['value'];
-		}
-		return $settings;
 	}
 }

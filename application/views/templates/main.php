@@ -7,7 +7,7 @@
 
 
 <div class="container">
-	<?php $this->load->view($header); ?>
+	<?php $this->load->view('templates/header'); ?>
 </div>
 
 <div class="container">
@@ -21,7 +21,14 @@
 </div>
 
 
-<?= (function_exists('form_submit_scroll_script')) ? form_submit_scroll_script() : ''; ?>
+<?php if (isset($_SESSION['form_submit_scroll_id'])) { ?>
+	<script>
+		$(document).ready(function () {
+			$("#<?= $_SESSION['form_submit_scroll_id'] ?>").get(0).scrollIntoView();
+		});
+	</script>
+<?php } ?>
+
 
 </body>
 </html>

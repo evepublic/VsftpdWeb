@@ -3,24 +3,12 @@
 	<div class="container-fluid" id="navbartop">
 
 		<div class="navbar-header">
-			<span class="navbar-brand">VsftpdWeb FTP Administration: <?= htmlentities($site_name_display); ?></span>
+			<span class="navbar-brand">VsftpdWeb FTP Administration: <?= $site_name_display ?></span>
 		</div>
 
-		<ul class="nav navbar-nav navbar-right">
-			<li>
-				<table class="table" id="diskspace">
-					<tr>
-						<td><?= $disk1['disk'] ?></td>
-						<td>/</td>
-						<td><?= $disk2['space'] ?> free</td>
-					</tr>
-					<tr>
-						<td><?= $disk2['disk'] ?></td>
-						<td>/</td>
-						<td><?= $disk2['space'] ?> free</td>
-					</tr>
-				</table>
-			</li>
+		<ul class="nav navbar-nav navbar-right diskspace">
+			<li><?= $disk['path'] ?></li>
+			<li><?= $disk['space'] ?> free</li>
 		</ul>
 
 	</div>
